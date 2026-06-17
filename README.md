@@ -24,6 +24,7 @@ results, honest evaluation, and safe, gated rollouts rather than ship-and-pray.
 | **Shelf Detection** | Computer-vision merchandising service + mobile app (share-of-shelf analytics) | [projects/shelf-detection.md](projects/shelf-detection.md) |
 | **BOOMi** | Beverage brand — 3D web experience, generative video, social Business API integration | [projects/boomi.md](projects/boomi.md) |
 | **Jarvis** | Real-time streaming voice assistant (STT → LLM → TTS) | [projects/jarvis.md](projects/jarvis.md) |
+| **Influencer Pipeline** | Micro-influencer discovery & vetting pipeline (data engineering) | [projects/influencer-analytics.md](projects/influencer-analytics.md) |
 
 ---
 
@@ -148,6 +149,32 @@ for natural back-and-forth, with the platform's tools available by voice.
 multi-persona routing on a shared pipeline.
 
 → [Full write-up](projects/jarvis.md)
+
+---
+
+## Influencer Discovery & Vetting Pipeline
+
+**Problem.** Influencer marketing for a regional brand launch is wrecked by inflated follower
+counts and fake engagement (bots, engagement pods). The goal: a repeatable, low-cost pipeline that
+surfaces genuine **micro-influencers** with real, local audiences and filters out the noise.
+
+**Architecture.** A cheaper-first funnel: hashtag/geo discovery (managed scraping API) → a
+profile-metrics filter (follower band ~2k–5k + engagement rate ≥ ~4%) → a **comment-authenticity
+analysis** that detects bot/pod activity → a ranked, vetted shortlist with per-candidate HTML
+reports.
+
+**My role.** Built the full pipeline end-to-end — staged scraping orchestration, filtering/scoring,
+the comment-authenticity stage, reporting, and cost controls.
+
+**Stack.** Python, managed scraping API, engagement-rate analytics, HTML reporting,
+cost-budgeted batch orchestration.
+
+**Results.**
+- Narrowed **~970 candidates → ~30 qualifying → ~19 vetted** genuine micro-influencers.
+- Documented an honest **~3% hit-rate** as a realistic planning input.
+- Ran the full discovery → vetting cycle for **~$14** in scraping cost.
+
+→ [Full write-up](projects/influencer-analytics.md)
 
 ---
 
