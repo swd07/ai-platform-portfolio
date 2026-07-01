@@ -65,8 +65,8 @@ behind a single API layer:
 **My role.** Sole technical owner: system architecture, the full backend, the data model, the
 ERP/SOAP integration, the agent/tool layer, and production deployment and operations.
 
-**Stack.** Python, FastAPI, PostgreSQL, SOAP/ERP integration, LLM function-calling, Docker,
-process-based service orchestration.
+**Stack.** Python, FastAPI, PostgreSQL, SOAP/ERP integration, LLM function-calling, Next.js, PWA,
+Kotlin (Android), Socket.IO, Web Push (VAPID), Docker, process-based service orchestration.
 
 **Scale & results.**
 - **~2,000 retail outlets** served.
@@ -281,7 +281,11 @@ evaluation, real-time voice (Pipecat, streaming STT/LLM/TTS).
 
 **Data:** PostgreSQL, Qdrant (vector DB), S3-compatible object storage.
 
-**Frontend:** Next.js, React, React Three Fiber, WebRTC.
+**Frontend:** Next.js, React, React Three Fiber, PWA, WebRTC.
+
+**Mobile:** installable PWA (Web Push / VAPID), native Android (Kotlin).
+
+**Real-time:** Socket.IO (chat / presence), WebRTC (voice), Web Push.
 
 **Infra / Ops:** NVIDIA H200 GPU inference, Docker, nginx, process orchestration, feature
 flagging, CI/deploy scripting, observability & health monitoring.

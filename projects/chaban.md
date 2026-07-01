@@ -49,7 +49,8 @@ integration, and production deployment and operations.
 ## Stack
 
 `Python` · `FastAPI` · `PostgreSQL` · `SOAP / 1C ERP integration` · `LLM function-calling` ·
-`Docker` · `process-based service orchestration`
+`Next.js` · `PWA` · `Kotlin (Android)` · `Socket.IO` · `Web Push (VAPID)` · `Docker` ·
+`process-based service orchestration`
 
 ## Scale & results
 
