@@ -18,6 +18,8 @@ answer.
 
 ## Architecture
 
+![Shelf detection CV pipeline](../assets/shelf-detection-pipeline.png)
+
 A staged, asynchronous pipeline with self-hosted GPU inference:
 
 ```

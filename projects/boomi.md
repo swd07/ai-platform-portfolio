@@ -3,6 +3,8 @@
 > A consumer beverage brand's digital presence: an interactive 3D marketing site, a
 > generative-video creative workflow, and a programmatic social-publishing integration.
 
+🔗 **Live site:** [boomidrinks.ru](https://boomidrinks.ru)
+
 ## Problem
 
 Launch a beverage brand online with a premium, memorable web experience and an automatable

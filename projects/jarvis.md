@@ -3,6 +3,8 @@
 > A low-latency, hands-free voice assistant: streaming speech-to-text → LLM → text-to-speech,
 > with multi-persona routing on a shared pipeline.
 
+![Jarvis streaming voice pipeline](../assets/jarvis-streaming-pipeline.png)
+
 ## Problem
 
 Build a voice assistant that feels conversational — latency low enough for natural back-and-forth

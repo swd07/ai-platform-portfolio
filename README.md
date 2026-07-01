@@ -32,11 +32,14 @@ honest evaluation, and safe gated rollouts rather than demo-only AI.
 | **Shelf Detection** | Computer-vision merchandising service + mobile app (share-of-shelf analytics) | [projects/shelf-detection.md](projects/shelf-detection.md) |
 | **BOOMi** | Beverage brand — 3D web experience, generative video, social Business API integration | [projects/boomi.md](projects/boomi.md) |
 | **Jarvis** | Real-time streaming voice assistant (STT → LLM → TTS) | [projects/jarvis.md](projects/jarvis.md) |
+| **AIOps Monitoring Agent** | Self-hosted infra watcher with rule-based detectors, LLM responder, and mobile alerts | [projects/infra-monitoring-agent.md](projects/infra-monitoring-agent.md) |
 | **Influencer Pipeline** | Micro-influencer discovery & vetting pipeline (data engineering) | [projects/influencer-analytics.md](projects/influencer-analytics.md) |
 
 ---
 
 ## Chaban — AI Sales-Management & CV Merchandising Platform
+
+![Chaban platform architecture](assets/chaban-architecture.png)
 
 **Problem.** A large FMCG / dairy producer ran field sales and merchandising across a wide retail
 network on manual, fragmented processes. The goal: digitize order capture, merchandising
@@ -52,6 +55,12 @@ behind a single API layer:
   services.
 - **LLM agent layer** — a function-calling assistant exposing **~23 tools** over the platform's
   data and operations, so non-technical users can query and act in natural language.
+- **Two mobile clients** — an installable **PWA** (Next.js) for field sales reps (order capture +
+  web-push alerts) and a **native Android (Kotlin)** app for merchandisers (in-store shelf photo
+  capture, feeding the CV pipeline).
+- **Real-time messenger** — an in-house **Socket.IO** chat (DM / group / channel / bot / support
+  rooms) with presence, attachments, role-based access, and web-push — on both web and mobile. It
+  doubles as the delivery channel for agent alerts (bot rooms), e.g. incidents from the monitoring agent.
 
 **My role.** Sole technical owner: system architecture, the full backend, the data model, the
 ERP/SOAP integration, the agent/tool layer, and production deployment and operations.
@@ -65,18 +74,25 @@ process-based service orchestration.
 - **~50 active users** (field sales + office).
 - Replaced manual order entry and spreadsheet reporting with an integrated, ERP-synced flow.
 
+**Operations.** The platform runs under the supervision of a separate self-hosted
+**monitoring / alerting agent** that watches services, PM2 processes, GPU, and inference endpoints,
+and pushes alerts to a mobile chat — so the system is not just built, but actively operated.
+See [AIOps Monitoring Agent](projects/infra-monitoring-agent.md).
+
 → [Full write-up](projects/chaban.md)
 
 ---
 
 ## Shelf Detection — Merchandising Computer-Vision Service + Mobile App
 
+![Shelf detection CV pipeline](assets/shelf-detection-pipeline.png)
+
 **Problem.** Measure on-shelf reality — share of shelf, assortment coverage, competitor presence,
 package/format mix — directly from photos taken by field merchandisers, at scale, without manual
 tagging.
 
 **Architecture.** A staged, asynchronous CV pipeline:
-- **Mobile capture app** → ingestion API → durable **work queue** → async worker.
+- **Mobile capture app** (native Android, Kotlin) → ingestion API → durable **work queue** → async worker.
 - **Object detection** (YOLO / open-vocabulary detection) to localize product packs on the shelf.
 - **OCR + Vision-Language model** pass to read brand/label text from each crop.
 - **Visual embeddings** (DINOv2 ViT-L/14) feeding a **KNN gallery** of confirmed products.
@@ -108,6 +124,8 @@ FastAPI, PostgreSQL, self-hosted S3-compatible object storage, Docker.
 
 ## BOOMi — Beverage Brand: 3D Web, Generative Video, Social Integration
 
+🔗 **Live site:** [boomidrinks.ru](https://boomidrinks.ru)
+
 **Problem.** Launch a consumer beverage brand with a premium digital presence and an automatable
 social-media channel.
 
@@ -137,6 +155,8 @@ creative.
 
 ## Jarvis — Real-Time Streaming Voice Assistant
 
+![Jarvis streaming voice pipeline](assets/jarvis-streaming-pipeline.png)
+
 **Problem.** A hands-free operational assistant that feels conversational — low enough latency
 for natural back-and-forth, with the platform's tools available by voice.
 
@@ -157,6 +177,38 @@ for natural back-and-forth, with the platform's tools available by voice.
 multi-persona routing on a shared pipeline.
 
 → [Full write-up](projects/jarvis.md)
+
+---
+
+## AIOps Monitoring Agent — Self-Hosted Infra Watcher + LLM Responder
+
+**Problem.** Operating several production AI and business-critical services as a solo technical
+owner means failures must be detected fast, explained clearly, and surfaced where they will
+actually be seen — across application health, AI inference endpoints, PM2 processes, GPU, remote
+hosts, and database/integration signals.
+
+**Architecture.** A hybrid agent that pairs deterministic detectors with an LLM responder:
+- **Rule-based detectors** — service-down events, PM2 restart spikes (crash-loop detection), GPU
+  power/health, remote-host availability, chat-delivery failures, and DB/integration anomalies.
+- **LLM responder** — backed by a self-hosted **Qwen** model for incident summarization and
+  operator-friendly context.
+- **Service registry** — the monitored applications, AI inference endpoints, and infrastructure.
+- **Mobile chat alerting** — incidents delivered directly to the operator, not buried in logs.
+- **Continuous production loop** emitting actionable alerts when thresholds are crossed.
+
+**My role.** Designed and built the monitoring system end-to-end: detector logic, service registry,
+LLM responder integration, alert formatting, chat delivery, and production operation.
+
+**Stack.** Python, PM2 monitoring, self-hosted LLM (Qwen), GPU infrastructure monitoring, service
+health checks, chat-based alerting, Linux operations.
+
+**Results.**
+- Automatic PM2 crash-loop detection via restart-rate thresholds.
+- Full-stack coverage: application services, OCR/VLM/embedding endpoints, GPU infrastructure, remote hosts.
+- Alerts delivered to a mobile-readable chat, cutting reliance on manual SSH/log checks.
+- A practical AIOps layer letting one engineer operate multiple production AI systems.
+
+→ [Full write-up](projects/infra-monitoring-agent.md)
 
 ---
 
