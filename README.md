@@ -1,14 +1,22 @@
-# AI Integrator / Platform Architect — Portfolio
+# AI Platform Architect / Full-Stack AI Engineer — Portfolio
 
-I design and ship **production AI/ML systems end-to-end** — from architecture and data
-modelling through ML pipelines, backend services, infrastructure, and frontend. I work as the
-**sole technical owner** of several AI products: I make the architectural decisions, write the
-code across the stack, run the GPU inference infrastructure, and operate the systems in
-production.
+I design and ship **production AI systems end-to-end** — from backend architecture,
+data modelling and ML pipelines to GPU inference infrastructure, LLM agent layers,
+ERP integrations, frontend interfaces, and production operations.
 
-My focus areas are **computer vision pipelines**, **LLM agent / function-calling layers**,
-**real-time voice**, and **ERP/system integration** — with a strong bias toward measurable
-results, honest evaluation, and safe, gated rollouts rather than ship-and-pray.
+I work as the **sole technical owner** of several AI products: I make the
+architectural decisions, write code across the stack, run self-hosted inference
+infrastructure, integrate with business systems, and operate the systems in production.
+
+My focus areas are **computer vision pipelines**, **LLM agents / function-calling
+systems**, **real-time voice assistants**, **ERP and business-system integrations**,
+and **AI-powered product interfaces** — with a strong bias toward measurable results,
+honest evaluation, and safe gated rollouts rather than demo-only AI.
+
+> **Note on code access:** most production code is private because these systems
+> run inside commercial environments and include business integrations, infrastructure
+> details, and proprietary data. This repository contains sanitized case studies,
+> architecture notes, metrics, and selected implementation details.
 
 > **What this portfolio shows:** for each project — the problem, the architecture, my role, the
 > stack, and concrete results. Infrastructure is described at the level of *technology class*
@@ -222,6 +230,11 @@ flagging, CI/deploy scripting, observability & health monitoring.
 
 ---
 
-> **Contact:** _add your name, email, and links here._
+## Contact
+
+**Eduard Haraev**  
+GitHub: [swd07](https://github.com/swd07)  
+Email: [haraev87@gmail.com](mailto:haraev87@gmail.com)
+
 > This portfolio describes systems I architected and own as the sole technical engineer.
 > Infrastructure details are intentionally generalized to the technology-class level.
