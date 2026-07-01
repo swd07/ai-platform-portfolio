@@ -125,7 +125,7 @@ FastAPI, PostgreSQL, self-hosted S3-compatible object storage, Docker.
 
 ## BOOMi - Beverage Brand: 3D Web, Generative Video, Social Integration
 
-🔗 **Live site:** [boomidrinks.ru](https://boomidrinks.ru)
+🔗 **Live demo available on request.**
 
 **Problem.** Launch a consumer beverage brand with a premium digital presence and an automatable
 social-media channel.
