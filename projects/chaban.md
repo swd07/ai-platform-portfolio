@@ -28,9 +28,10 @@ The system evolved from an initial monolith into modular services behind a unifi
   heuristics), which removed a whole class of reconciliation bugs.
 - **Operations control panel** - surfaces service health, deployments, and security/monitoring
   signals for the running platform.
-- **LLM agent layer** - a **function-calling assistant exposing ~23 tools** over the platform's
-  data and operations. Users ask questions and trigger actions in natural language; the agent
-  maps intent to the correct tool with structured arguments.
+- **LLM agents** - a set of **function-calling assistants** (an in-platform KPI/SQL agent plus
+  separate director and per-rep agents) exposing **~20+ tools in total** over the platform's data
+  and operations. Users ask questions and trigger actions in natural language; each agent maps
+  intent to the correct tool with structured arguments.
 - **Two mobile clients** - an installable **PWA** (Next.js) for field sales reps (order capture and
   web-push alerts) and a **native Android (Kotlin)** app for merchandisers (in-store shelf photo
   capture, feeding the computer-vision pipeline).
@@ -64,8 +65,8 @@ integration, and production deployment and operations.
 
 - **Integration discipline:** diagnosing ERP exchange issues by tracing concrete document
   identifiers end-to-end instead of relying on heuristics.
-- **Agent design:** a bounded, well-typed tool surface (~23 tools) rather than an open-ended
-  free-text agent - predictable, auditable, and safe to expose to non-technical users.
+- **Agent design:** bounded, well-typed tool surfaces (~20+ tools across the assistants) rather than
+  an open-ended free-text agent - predictable, auditable, and safe to expose to non-technical users.
 - **Operability:** health monitoring, supervised processes, and a deployment control surface so a
   single engineer can run the platform reliably.
 - **Operated, not just built:** the platform runs under a separate self-hosted

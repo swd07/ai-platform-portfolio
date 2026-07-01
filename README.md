@@ -53,8 +53,9 @@ behind a single API layer:
   exchange (orders, catalogues, reference data) with a traceable source-of-truth mapping.
 - **Operations control panel** - monitoring, deployment, and health surfacing for the running
   services.
-- **LLM agent layer** - a function-calling assistant exposing **~23 tools** over the platform's
-  data and operations, so non-technical users can query and act in natural language.
+- **LLM agents** - a set of function-calling assistants (an in-platform KPI/SQL agent plus separate
+  director and per-rep agents) exposing **~20+ tools in total** over the platform's data and
+  operations, so non-technical users can query and act in natural language.
 - **Two mobile clients** - an installable **PWA** (Next.js) for field sales reps (order capture +
   web-push alerts) and a **native Android (Kotlin)** app for merchandisers (in-store shelf photo
   capture, feeding the CV pipeline).
