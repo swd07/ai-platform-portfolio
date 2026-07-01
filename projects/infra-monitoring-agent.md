@@ -1,4 +1,4 @@
-# AIOps Monitoring Agent — Self-Hosted Infra Watcher + LLM Responder
+# AIOps Monitoring Agent - Self-Hosted Infra Watcher + LLM Responder
 
 > A self-hosted monitoring and incident-response assistant for production AI infrastructure:
 > rule-based detectors, LLM-assisted diagnostics, PM2/service/GPU checks, and mobile chat alerts.
@@ -16,16 +16,20 @@ PM2 process stability, GPU infrastructure, remote hosts, and database/integratio
 
 The agent combines deterministic detectors with an LLM responder:
 
-- **Rule-based detectors** for service-down events, PM2 restart spikes, GPU power/health signals,
-  remote host availability, chat delivery failures, and database/integration anomalies.
+- **13 independent detectors** - service-down, PM2 crash-loop (restart-rate spikes), memory leaks,
+  GPU power/thermal/VRAM anomalies, disk-full, remote-host unreachability, database anomalies, ERP
+  (1C) send-failures, and OCR empty-rate, plus security detectors (HTTP brute-force, 429 spikes,
+  5xx spikes, SSH brute-force).
+- **~22 health-checked endpoints** in the service registry - 6 backend APIs, 5 web frontends, 6 AI
+  inference services (LLM agent, VLM, OCR, embeddings, object detection, DINOv2), and core infra
+  (S3-compatible object storage, vector DB, PostgreSQL, connection pooler, Redis) - plus every PM2
+  process, GPU, disk, and remote hosts.
 - **LLM responder layer** backed by a self-hosted Qwen model for summarizing incidents and helping
   interpret operational context.
-- **Service registry** describing monitored applications, AI inference endpoints, and infrastructure
-  components.
 - **Mobile chat alerting** so incidents are delivered directly to the operator instead of being
   buried in logs or dashboards.
-- **Production loop** that continuously checks the stack and emits actionable alerts when thresholds
-  are crossed.
+- **60-second production loop** (cron-driven) that re-checks the whole stack every minute, with
+  threshold + consecutive-failure counters and dedup so a flapping service alerts once, not every tick.
 
 ## My role
 
@@ -39,11 +43,25 @@ LLM responder integration, alert formatting, chat delivery, and production opera
 
 ## Results
 
-- Detected PM2 crash-loop incidents automatically using restart-rate thresholds.
-- Monitored the full AI stack: application services, OCR/VLM/embedding endpoints, GPU-related
-  infrastructure, and remote hosts.
-- Delivered alerts into a mobile-readable chat channel, reducing reliance on manual SSH/log checks.
-- Created a practical AIOps layer that allows one engineer to operate multiple production AI systems.
+- **~22 endpoints + full host** under continuous watch: 6 APIs, 5 web frontends, 6 AI inference
+  services, object storage, vector DB, PostgreSQL/pooler/Redis - plus every PM2 process, GPU
+  (temperature / VRAM / power), disk, and remote hosts.
+- **13 detectors** running on a **60-second loop**, so incidents surface within roughly one cycle
+  instead of being discovered hours later in logs.
+- **Threshold-tuned to cut alert fatigue** - e.g. PM2 crash-loop fires at ≥3 restarts/min, a service
+  is only flagged after ≥3 consecutive down-checks, GPU at 85 °C / 97 % VRAM / 98 % power - combined
+  with dedup so a flapping component alerts once.
+- **Alerts delivered to a dedicated mobile chat channel**, removing the need for manual SSH or
+  log-tailing to notice failures.
+- A practical AIOps layer that lets **one engineer operate multiple production AI systems** across
+  application, inference, and infrastructure tiers.
+
+### Example incident
+
+A preview web process entered a crash-loop, restarting **~222 times per minute** against a threshold
+of 3. The detector caught it on the next 60-second cycle and pushed a **🚨 PM2 CRASH LOOP** alert to
+the mobile chat with the process name and restart counts - turning an otherwise invisible,
+CPU-burning failure into an immediate, actionable notification instead of a problem found hours later.
 
 ## Engineering highlights
 
@@ -53,5 +71,5 @@ LLM responder integration, alert formatting, chat delivery, and production opera
   they stay invisible.
 - **Operator-first alerting:** alerts go to a chat interface the operator actually reads, not only to
   server logs.
-- **Self-hosted AI operations:** the same infrastructure philosophy applies to monitoring itself —
+- **Self-hosted AI operations:** the same infrastructure philosophy applies to monitoring itself -
   local services, controlled dependencies, and no unnecessary SaaS coupling.

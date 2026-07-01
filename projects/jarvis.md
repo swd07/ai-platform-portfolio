@@ -1,4 +1,4 @@
-# Jarvis — Real-Time Streaming Voice Assistant
+# Jarvis - Real-Time Streaming Voice Assistant
 
 > A low-latency, hands-free voice assistant: streaming speech-to-text → LLM → text-to-speech,
 > with multi-persona routing on a shared pipeline.
@@ -7,8 +7,8 @@
 
 ## Problem
 
-Build a voice assistant that feels conversational — latency low enough for natural back-and-forth
-— and that exposes the platform's tools by voice, with resilience when a component degrades.
+Build a voice assistant that feels conversational - latency low enough for natural back-and-forth
+- and that exposes the platform's tools by voice, with resilience when a component degrades.
 
 ## Architecture
 
@@ -38,6 +38,6 @@ reduction** across the STT → LLM → TTS path.
 ## Engineering highlights
 
 - **Latency focus:** profiling and reducing time-to-first-byte across a multi-stage streaming
-  pipeline — the metric that most affects how "live" a voice assistant feels.
+  pipeline - the metric that most affects how "live" a voice assistant feels.
 - **Graceful degradation:** a fallback voice so a single failing dependency doesn't take the
   assistant offline.

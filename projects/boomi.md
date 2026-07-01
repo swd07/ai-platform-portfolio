@@ -1,4 +1,4 @@
-# BOOMi — Beverage Brand: 3D Web, Generative Video & Social Integration
+# BOOMi - Beverage Brand: 3D Web, Generative Video & Social Integration
 
 > A consumer beverage brand's digital presence: an interactive 3D marketing site, a
 > generative-video creative workflow, and a programmatic social-publishing integration.
@@ -8,20 +8,20 @@
 ## Problem
 
 Launch a beverage brand online with a premium, memorable web experience and an automatable
-social-media channel — built and operated by one engineer.
+social-media channel - built and operated by one engineer.
 
 ## Architecture
 
-- **Marketing site** — Next.js + React with **React Three Fiber** for real-time 3D rendering in
+- **Marketing site** - Next.js + React with **React Three Fiber** for real-time 3D rendering in
   the browser (product/scene visuals, a scroll-driven hero), plus a complete brand-identity system
   (palette, typography, motion language). Served as a production build behind a reverse proxy with
   TLS.
-- **Generative video creative** — an image-to-video / text-to-video workflow for cinematic product
+- **Generative video creative** - an image-to-video / text-to-video workflow for cinematic product
   clips. I established a **draft-then-final cost discipline** (iterate at low resolution, render
   finals at high resolution) after measuring how quickly high-res iteration burns budget.
-- **Social Business API integration** — a FastAPI wrapper around a social-media **Business API**
+- **Social Business API integration** - a FastAPI wrapper around a social-media **Business API**
   for programmatic content publishing, including access-token lifecycle handling (refresh/rotation).
-- **Self-hosted media delivery** — brand media assets served from a dedicated static host behind
+- **Self-hosted media delivery** - brand media assets served from a dedicated static host behind
   TLS, so the publishing integration can fetch assets over public HTTPS.
 
 ## My role
