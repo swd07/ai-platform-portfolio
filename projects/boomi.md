@@ -19,8 +19,9 @@ social-media channel - built and operated by one engineer.
 - **Generative video creative** - an image-to-video / text-to-video workflow for cinematic product
   clips. I established a **draft-then-final cost discipline** (iterate at low resolution, render
   finals at high resolution) after measuring how quickly high-res iteration burns budget.
-- **Social Business API integration** - a FastAPI wrapper around a social-media **Business API**
-  for programmatic content publishing, including access-token lifecycle handling (refresh/rotation).
+- **Social publishing** - programmatic Instagram publishing via the Business/Graph API, including
+  access-token lifecycle handling (refresh/rotation). Social intelligence and campaign analytics
+  are covered in depth in the [Social Media Intelligence](social-media-intelligence.md) case study.
 - **Self-hosted media delivery** - brand media assets served from a dedicated static host behind
   TLS, so the publishing integration can fetch assets over public HTTPS.
 

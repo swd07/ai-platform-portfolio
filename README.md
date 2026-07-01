@@ -33,7 +33,7 @@ honest evaluation, and safe gated rollouts rather than demo-only AI.
 | **BOOMi** | Beverage brand - 3D web experience, generative video, social Business API integration | [projects/boomi.md](projects/boomi.md) |
 | **Jarvis** | Real-time streaming voice assistant (STT → LLM → TTS) | [projects/jarvis.md](projects/jarvis.md) |
 | **AIOps Monitoring Agent** | Self-hosted infra watcher with rule-based detectors, LLM responder, and mobile alerts | [projects/infra-monitoring-agent.md](projects/infra-monitoring-agent.md) |
-| **Influencer Pipeline** | Micro-influencer discovery & vetting pipeline (data engineering) | [projects/influencer-analytics.md](projects/influencer-analytics.md) |
+| **Social Media Intelligence** | Influencer discovery + Instagram/Graph API + campaign analytics (Metrika, GSC) | [projects/social-media-intelligence.md](projects/social-media-intelligence.md) |
 
 ---
 
@@ -136,8 +136,9 @@ social-media channel.
   (palette, typography, motion).
 - **Generative video creative** - an image-to-video / text-to-video pipeline used to produce
   cinematic product clips, with a draft-then-final cost discipline.
-- **Social Business API integration** - a FastAPI wrapper around a social-media **Business API**
-  for programmatic publishing, with token lifecycle handling.
+- **Social publishing** - programmatic Instagram publishing via the Business/Graph API (token
+  lifecycle handled). Social intelligence and campaign analytics are covered in
+  [Social Media Intelligence](projects/social-media-intelligence.md).
 - **Self-hosted media delivery** for brand assets behind TLS.
 
 **My role.** Full-stack build (frontend + backend), the 3D/creative front-end, the generative
@@ -219,29 +220,38 @@ health checks, chat-based alerting, Linux operations.
 
 ---
 
-## Influencer Discovery & Vetting Pipeline
+## AI-Assisted Social Media Intelligence & Campaign Analytics
 
-**Problem.** Influencer marketing for a regional brand launch is wrecked by inflated follower
-counts and fake engagement (bots, engagement pods). The goal: a repeatable, low-cost pipeline that
-surfaces genuine **micro-influencers** with real, local audiences and filters out the noise.
+**Problem.** A regional consumer-brand launch needed more than social-media activity: discover
+genuine local micro-influencers, filter out inflated followers and fake engagement, and connect
+campaign activity to real signals - website traffic, search visibility, and Instagram growth -
+instead of vanity metrics.
 
-**Architecture.** A cheaper-first funnel: hashtag/geo discovery (managed scraping API) → a
-profile-metrics filter (follower band ~2k-5k + engagement rate ≥ ~4%) → a **comment-authenticity
-analysis** that detects bot/pod activity → a ranked, vetted shortlist with per-candidate HTML
-reports.
+**Architecture.** A workflow across three connected layers:
+- **Influencer discovery & vetting** - regional hashtag/geo seeding → follower-band + engagement
+  filter → comment-authenticity analysis (bot/pod detection) → ranked, vetted shortlist with
+  per-candidate reports.
+- **Instagram Business/Graph API** - brand-account operations: Reels publishing
+  (container → poll → publish), comment replies, and account-metric collection (followers, media).
+- **Campaign analytics & reporting** - Yandex Metrika (traffic, sources, devices, age, conversion
+  goals), Google Search Console (clicks, impressions, CTR, position, branded vs. non-branded),
+  Instagram follower growth, period-over-period comparison, and rolling-window spike detection.
 
-**My role.** Built the full pipeline end-to-end - staged scraping orchestration, filtering/scoring,
-the comment-authenticity stage, reporting, and cost controls.
+**My role.** Built the data-collection and analytics workflow end-to-end: discovery, Apify-based
+extraction, Instagram API operations, website/search metric aggregation, campaign reporting logic,
+and AI-assisted analysis. (The full BOOMi internal platform is a separate product; this case study
+is the social-intelligence and analytics layer I built around the brand's marketing activity.)
 
-**Stack.** Python, managed scraping API, engagement-rate analytics, HTML reporting,
-cost-budgeted batch orchestration.
+**Stack.** Python, Apify, Instagram Business/Graph API, Yandex Metrika API, Google Search Console
+API, marketing analytics, campaign reporting, AI-assisted analysis.
 
 **Results.**
-- Narrowed **~970 candidates → ~30 qualifying → ~19 vetted** genuine micro-influencers.
-- Documented an honest **~3% hit-rate** as a realistic planning input.
-- Ran the full discovery → vetting cycle for **~$14** in scraping cost.
+- Narrowed **~970 candidates → ~30 qualifying → ~19 vetted** genuine micro-influencers at low
+  scraping cost, with an honest hit-rate documented as a realistic planning input.
+- Structured multi-source reporting (traffic, search visibility, Instagram growth, campaign-period
+  comparison) connecting brand-promotion activity to measurable audience signals.
 
-→ [Full write-up](projects/influencer-analytics.md)
+→ [Full write-up](projects/social-media-intelligence.md)
 
 ---
 
