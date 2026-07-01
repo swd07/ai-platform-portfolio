@@ -28,7 +28,7 @@ honest evaluation, and safe gated rollouts rather than demo-only AI.
 
 | Project | One-liner | Deep-dive |
 |---|---|---|
-| **Chaban** | AI sales-management + CV merchandising platform for a large FMCG / dairy producer | [projects/chaban.md](projects/chaban.md) |
+| **Chaban** | AI sales-management + CV merchandising platform for a large FMCG producer | [projects/chaban.md](projects/chaban.md) |
 | **Shelf Detection** | Computer-vision merchandising service + mobile app (share-of-shelf analytics) | [projects/shelf-detection.md](projects/shelf-detection.md) |
 | **BOOMi** | Beverage brand - 3D web experience, generative video, social Business API integration | [projects/boomi.md](projects/boomi.md) |
 | **Jarvis** | Real-time streaming voice assistant (STT → LLM → TTS) | [projects/jarvis.md](projects/jarvis.md) |
@@ -41,7 +41,7 @@ honest evaluation, and safe gated rollouts rather than demo-only AI.
 
 ![Chaban platform architecture](assets/chaban-architecture.png)
 
-**Problem.** A large FMCG / dairy producer ran field sales and merchandising across a wide retail
+**Problem.** A large FMCG producer ran field sales and merchandising across a wide retail
 network on manual, fragmented processes. The goal: digitize order capture, merchandising
 compliance, and analytics into one platform that integrates with the company's ERP.
 

@@ -1,6 +1,6 @@
 # Chaban - AI Sales-Management & CV Merchandising Platform
 
-> AI sales-management + computer-vision merchandising platform for **a large FMCG / dairy
+> AI sales-management + computer-vision merchandising platform for **a large FMCG
 > producer**, owned and built end-to-end as the sole technical engineer.
 
 ![Chaban platform architecture](../assets/chaban-architecture.png)
