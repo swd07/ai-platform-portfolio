@@ -1,4 +1,4 @@
-# AI Platform Architect / Full-Stack AI Engineer - Portfolio
+# Applied AI Engineer / AI Platform Architect - Portfolio
 
 I design and ship **production AI systems end-to-end** - from backend architecture,
 data modelling and ML pipelines to GPU inference infrastructure, LLM agent layers,
