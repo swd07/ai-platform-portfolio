@@ -34,6 +34,7 @@ honest evaluation, and safe gated rollouts rather than demo-only AI.
 | **Jarvis** | Real-time streaming voice assistant (STT → LLM → TTS) | [projects/jarvis.md](projects/jarvis.md) |
 | **AIOps Monitoring Agent** | Self-hosted infra watcher with rule-based detectors, LLM responder, and mobile alerts | [projects/infra-monitoring-agent.md](projects/infra-monitoring-agent.md) |
 | **Social Media Intelligence** | Influencer discovery + Instagram/Graph API + campaign analytics (Metrika, GSC) | [projects/social-media-intelligence.md](projects/social-media-intelligence.md) |
+| **Fitness Marathon Platform** | Coach/client platform for cohort-based fitness marathons (Next.js + Payload CMS) | [projects/fitness-platform.md](projects/fitness-platform.md) |
 
 ---
 
@@ -277,6 +278,36 @@ API, marketing analytics, campaign reporting, AI-assisted analysis.
 
 ---
 
+## Fitness Marathon Platform - Coach/Client Coaching System
+
+**Problem.** A fitness coach runs women's online marathons (nutrition + home workouts) through
+messengers and spreadsheets. Goal: one platform - the coach publishes daily meal plans and
+workout programs and reviews photo food reports; participants get an app-like daily flow with
+weight, progress photos, chat, and activity tracking.
+
+**Architecture.** Next.js 15 with **Payload CMS 3 embedded natively** (one process, no separate
+backend), PostgreSQL, 21 collections. Cohort model: program -> cohort -> calorie groups ->
+enrollments; one shared daily menu with **per-calorie-tier portions**. **Private file layer**
+(HMAC-signed expiring URLs, per-collection RBAC, EXIF strip) for food reports and progress
+photos; membership-based group/direct chat auto-provisioned by enrollment hooks; group-scoped
+trainer cabinet with review workflow.
+
+**My role.** Sole engineer end-to-end; delivered in **7 vertical slices**, each through an
+external review gate.
+
+**Stack.** Next.js 15, Payload CMS 3, TypeScript (strict), PostgreSQL, Tailwind, Vitest,
+Playwright, Docker.
+
+**Scale & results.**
+- Complete two-circuit prototype, accepted by a scripted end-to-end walkthrough.
+- **204 automated tests** (170 unit/integration x2 runs + 34 e2e), including dedicated security
+  suites (IDOR, CSRF, file-access isolation, trainer scope).
+- Domain invariants enforced in the data layer (hooks + partial unique indexes), not the UI.
+
+-> [Full write-up](projects/fitness-platform.md)
+
+---
+
 ## Tech Stack
 
 **Languages:** Python, TypeScript / JavaScript, SQL.
@@ -288,11 +319,11 @@ classifier training & calibration.
 **LLM / Agents:** function-calling / tool-use agent layers, multi-tool orchestration, LLM-as-judge
 evaluation, real-time voice (Pipecat, streaming STT/LLM/TTS).
 
-**Backend:** FastAPI, REST APIs, async work queues, SOAP/ERP (1C) integration.
+**Backend:** FastAPI, REST APIs, async work queues, SOAP/ERP (1C) integration, Payload CMS 3.
 
 **Data:** PostgreSQL, Qdrant (vector DB), S3-compatible object storage.
 
-**Frontend:** Next.js, React, React Three Fiber, PWA, WebRTC.
+**Frontend:** Next.js, React, Tailwind, React Three Fiber, PWA, WebRTC.
 
 **Mobile:** installable PWA (Web Push / VAPID), native Android (Kotlin).
 
