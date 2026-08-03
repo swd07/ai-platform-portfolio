@@ -102,6 +102,7 @@ FastAPI, PostgreSQL, self-hosted S3-compatible object storage, Docker.
   shadow and is measured on a real population before it can affect production metrics).
 
 → [Full write-up](projects/shelf-detection.md)
+→ [Public case study + runnable examples](https://github.com/swd07/retail-shelf-detection)
 
 ---
 
@@ -294,7 +295,7 @@ Playwright, Docker.
 **Languages:** Python, TypeScript / JavaScript, SQL.
 
 **ML / CV:** PyTorch, YOLO & open-vocabulary object detection, DINOv2 visual embeddings,
-Vision-Language models, OCR, retrieval-augmented generation (RAG), ArcFace metric learning,
+Vision-Language models, OCR, vector retrieval, KNN matching, Qdrant, ArcFace metric learning,
 classifier training & calibration.
 
 **LLM / Agents:** function-calling / tool-use agent layers, multi-tool orchestration, LLM-as-judge
