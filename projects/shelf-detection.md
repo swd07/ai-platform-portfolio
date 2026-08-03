@@ -3,6 +3,10 @@
 > A computer-vision pipeline that turns field-merchandiser shelf photos into structured
 > share-of-shelf, assortment, and competitor analytics - designed and built end-to-end.
 
+![Live pipeline output: detected packs, brand/SKU labels, price tags, and honest "unknown" abstentions on a real store shelf](../assets/shelf-detection-live.jpg)
+
+*Live output on a real shelf: product boxes with brand/SKU labels, price-tag detections with read prices, and explicit `unknown` abstentions where evidence is insufficient — the honest-Unknown design below, visible in production.*
+
 ## Problem
 
 Measure on-shelf reality at scale, directly from photos:
