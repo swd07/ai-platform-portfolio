@@ -24,6 +24,12 @@ honest evaluation, and safe gated rollouts rather than demo-only AI.
 
 ---
 
+## What it looks like in production
+
+[![Shelf-detection pipeline, live output on a real store shelf](assets/shelf-detection-live.jpg)](projects/shelf-detection.md)
+
+*One real shelf photo through the CV pipeline: localized packs, brand/SKU labels, price-tag reads — and explicit `unknown` where evidence is insufficient (abstaining beats a confident wrong answer). Details: [Shelf Detection deep-dive](projects/shelf-detection.md).*
+
 ## Table of contents
 
 | Project | One-liner | Deep-dive |
