@@ -5,6 +5,13 @@
 
 ![Jarvis streaming voice pipeline](../assets/jarvis-streaming-pipeline.png)
 
+![Jarvis command center: agent fleet, project inventory, infrastructure and live activity on one surface](../assets/jarvis-command-center.jpg)
+
+*The command-center surface over the same platform: the AI-agent fleet (voice, text, director,
+KPI, vision worker, security bots, GPU watchdog) with per-agent queues and status, project
+inventory, infrastructure health incl. GPU memory, and a live log - one screen to see the whole
+system breathe. Internal endpoints redacted.*
+
 ## Problem
 
 Build a voice assistant that feels conversational - latency low enough for natural back-and-forth
