@@ -44,50 +44,25 @@ honest evaluation, and safe gated rollouts rather than demo-only AI.
 
 ---
 
-## Chaban - AI Sales-Management & CV Merchandising Platform
+## Chaban — Commercial Operating System for FMCG
 
 ![Chaban platform architecture](assets/chaban-architecture.png)
 
-**Problem.** A large FMCG producer ran field sales and merchandising across a wide retail
-network on manual, fragmented processes. The goal: digitize order capture, merchandising
-compliance, and analytics into one platform that integrates with the company's ERP.
+A single production platform used daily by field sales representatives,
+merchandisers, supervisors, managers, analysts, operations, and leadership.
 
-**Architecture.** The platform evolved from an early monolith into a set of modular services
-behind a single API layer:
-- **Order & sales management** backend (Python / FastAPI, PostgreSQL) covering the full
-  order lifecycle.
-- **ERP integration** with a 1C-based ERP over **SOAP web services** - bidirectional document
-  exchange (orders, catalogues, reference data) with a traceable source-of-truth mapping.
-- **Operations control panel** - monitoring, deployment, and health surfacing for the running
-  services.
-- **LLM agents** - a set of function-calling assistants (an in-platform KPI/SQL agent plus separate
-  director and per-rep agents) exposing **~20+ tools in total** over the platform's data and
-  operations, so non-technical users can query and act in natural language.
-- **Two mobile clients** - an installable **PWA** (Next.js) for field sales reps (order capture +
-  web-push alerts) and a **native Android (Kotlin)** app for merchandisers (in-store shelf photo
-  capture, feeding the CV pipeline).
-- **Real-time messenger** - an in-house **Socket.IO** chat (DM / group / channel / bot / support
-  rooms) with presence, attachments, role-based access, and web-push - on both web and mobile. It
-  doubles as the delivery channel for agent alerts (bot rooms), e.g. incidents from the monitoring agent.
+**Business impact**
 
-**My role.** Sole technical owner: system architecture, the full backend, the data model, the
-ERP/SOAP integration, the agent/tool layer, and production deployment and operations.
+- ~2,000 retail outlets and 500–700 orders/day connected directly to the 1C ERP.
+- Replaced paper, calls, spreadsheets, and disconnected reporting with one ERP-synced source of truth.
+- Field teams manage orders, clients, stock, debt, returns, KPI, and communication online and offline.
+- Managers and leadership see company-wide BI, plan/fact, forecasting, sales, debt, returns, and execution in real time.
+- LLM agents with 20+ typed tools let non-technical users query data and trigger operational actions in natural language.
 
-**Stack.** Python, FastAPI, PostgreSQL, SOAP/ERP integration, LLM function-calling, Next.js, PWA,
-Kotlin (Android), Socket.IO, Web Push (VAPID), Docker, process-based service orchestration.
+**My role:** sole technical owner — architecture, backend, data model, ERP integration,
+mobile and web products, agents, deployment, and production operations.
 
-**Scale & results.**
-- **~2,000 retail outlets** served.
-- **500-700 orders/day** flowing through the platform.
-- **~50 active users** (field sales + office).
-- Replaced manual order entry and spreadsheet reporting with an integrated, ERP-synced flow.
-
-**Operations.** The platform runs under the supervision of a separate self-hosted
-**monitoring / alerting agent** that watches services, PM2 processes, GPU, and inference endpoints,
-and pushes alerts to a mobile chat - so the system is not just built, but actively operated.
-See [AIOps Monitoring Agent](projects/infra-monitoring-agent.md).
-
-→ [Full write-up](projects/chaban.md)
+→ [Full architecture, role surfaces, and engineering details](projects/chaban.md)
 
 ---
 

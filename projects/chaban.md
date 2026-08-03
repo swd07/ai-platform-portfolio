@@ -1,4 +1,4 @@
-# Chaban - AI Sales-Management & CV Merchandising Platform
+# Chaban — Commercial Operating System for FMCG
 
 > The commercial **operating system** of a large FMCG producer: one platform where field
 > sales reps, merchandisers, supervisors, managers, analysts, and leadership all do their
