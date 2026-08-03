@@ -47,6 +47,11 @@ mobile capture app
   explicit priority order, and a set of guardrails reject or relabel low-evidence matches. A
   geometry-based *within-shelf* resolver disambiguates same-brand siblings (e.g. weight/format
   variants) using bounding-box layout when the label text is unreadable.
+- **Hybrid reporting tier:** share-of-shelf is reported at **brand+type** level by default;
+  SKU-level detail only where variant evidence actually exists (own brands + key competitors).
+  Same-brand *twins* - visually identical packaging across weights/flavors - are handled
+  honestly: the pipeline reports the brand and marks the variant as undetermined instead of
+  guessing (measured: ~94% of variant-ambiguous boxes carry no readable weight/volume text at all).
 - **GPU inference:** detection, embeddings, OCR, and the VLM run on a self-hosted **NVIDIA H200**.
 
 ## My role
@@ -75,11 +80,25 @@ storage` · `Docker` · `NVIDIA H200 GPU inference`
   on visual embeddings, lifting recall on that class from ~14% to the mid-90s while holding high
   precision - promoted to production behind a validated allowlist.
 
+- **Production scale:** ~300k product boxes/month across ~120 shelf installations;
+  1,200+ SKU catalog; 14k confirmed-crop visual gallery feeding the KNN track.
+- **Human-ceiling benchmark:** a blind, pre-registered protocol measured the *human*
+  brand-readability ceiling at **76.4%** on unrecognized boxes - expressing pipeline performance
+  as a % of that ceiling reframed the remaining gap as a catalog-boundary question, not
+  engineering debt.
+- **Config-drift class eliminated:** a brand-token list feeding the competitor guardrail had
+  silently diverged from its source-of-truth DB table (~775 boxes/month of avoidable Unknowns);
+  fixed by *generating* the config from the DB - drift is now impossible by construction.
+  Admission was gated to brand level only, after an eyes-on replay review of every stratum.
+
 ## Engineering highlights
 
 - **Honest-Unknown design:** guardrails explicitly abstain; I quantified that a large share of
   "Unknown" boxes were *intentional competitor rejections*, not coverage gaps - important context
   for interpreting the headline metric correctly.
+- **Pre-registered gates:** acceptance thresholds are written and committed *before* the
+  evaluation page is opened - per-stratum thresholds and stop-rules ("any false admission on
+  an own product reverts the whole package"), making reviews anchoring-proof.
 - **Shadow → active rollout:** every model/guardrail change runs in shadow and is measured on a
   real population before promotion; promotions are gated and reversible in one step.
 - **Evaluation honesty:** I learned (and enforced) that curated subsets overstate accuracy -
