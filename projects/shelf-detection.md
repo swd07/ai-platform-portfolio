@@ -51,7 +51,8 @@ mobile capture app
   SKU-level detail only where variant evidence actually exists (own brands + key competitors).
   Same-brand *twins* - visually identical packaging across weights/flavors - are handled
   honestly: the pipeline reports the brand and marks the variant as undetermined instead of
-  guessing (measured: ~94% of variant-ambiguous boxes carry no readable weight/volume text at all).
+  guessing (our OCR pipeline found an explicit weight token in only 5.6% of 39,253
+  variant-ambiguous crops over a 30-day window).
 - **GPU inference:** detection, embeddings, OCR, and the VLM run on a self-hosted **NVIDIA H200**.
 
 ## My role
@@ -82,10 +83,11 @@ storage` · `Docker` · `NVIDIA H200 GPU inference`
 
 - **Production scale:** ~300k product boxes/month across ~120 shelf installations;
   1,200+ SKU catalog; 14k confirmed-crop visual gallery feeding the KNN track.
-- **Human-ceiling benchmark:** a blind, pre-registered protocol measured the *human*
-  brand-readability ceiling at **76.4%** on unrecognized boxes - expressing pipeline performance
-  as a % of that ceiling reframed the remaining gap as a catalog-boundary question, not
-  engineering debt.
+- **Expert-readability ceiling:** a blind, pre-registered protocol produced a single-expert
+  ceiling estimate of **76.4%** for brand readability on unrecognized boxes
+  ([protocol & limitations](https://github.com/swd07/retail-shelf-detection/blob/main/docs/human-ceiling.md)) -
+  restating performance as a % of that ceiling reframed the remaining gap as a
+  catalog-boundary question, not engineering debt.
 - **Config-drift class eliminated:** a brand-token list feeding the competitor guardrail had
   silently diverged from its source-of-truth DB table (~775 boxes/month of avoidable Unknowns);
   fixed by *generating* the config from the DB - drift is now impossible by construction.
