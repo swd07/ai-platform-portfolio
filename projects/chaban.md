@@ -1,9 +1,34 @@
 # Chaban - AI Sales-Management & CV Merchandising Platform
 
-> AI sales-management + computer-vision merchandising platform for **a large FMCG
-> producer**, owned and built end-to-end as the sole technical engineer.
+> The commercial **operating system** of a large FMCG producer: one platform where field
+> sales reps, merchandisers, supervisors, managers, analysts, and leadership all do their
+> daily work - with AI woven through it, not bolted on. Owned and built end-to-end as the
+> sole technical engineer.
 
 ![Chaban platform architecture](../assets/chaban-architecture.png)
+
+## Business impact
+
+- **~2,000 retail outlets** and **500-700 orders/day** flow through the platform into the
+  1C ERP - order capture went from paper and phone calls to a ~2-minute digital flow.
+- **One system for every commercial role** (~50 daily field users plus office and leadership):
+  reps sell from an offline-first PWA, merchandisers feed the CV pipeline from a native
+  Android app, managers steer by a 26-tab BI dashboard, leadership sees KPI in real time.
+- **A single ERP-synced source of truth** replaced spreadsheets, calls, and disconnected
+  reports - with natural-language agents on top so non-technical staff query data and
+  trigger actions by asking.
+
+## One platform, every role
+
+| Role | Where they work | What they get |
+|---|---|---|
+| Field sales reps (~50) | Offline-first **PWA** | orders, client cards, debts, stock, personal KPI, chat - fully functional without connectivity |
+| Merchandisers | **Native Android (Kotlin)** app | in-store shelf photo capture feeding the [CV pipeline](https://github.com/swd07/retail-shelf-detection) |
+| Supervisors | Web | per-rep performance, returns, client coverage |
+| Managers & analysts | **BI dashboard - 26 tabs** | plan/fact, ABC/XYZ, debt, returns, service level, nine KPI/motivation views, forecast accuracy |
+| Leadership | Real-time dashboards + reports | company-wide KPI, share of shelf, forecast vs. fact |
+| Operations | Control panel + [monitoring agent](infra-monitoring-agent.md) | service health, deploys, incidents pushed to mobile chat |
+| Everyone | Built-in **messenger** | dm/group/channel/bot rooms; agents post alerts where people already talk |
 
 ## Problem
 
@@ -52,14 +77,6 @@ integration, and production deployment and operations.
 `Python` · `FastAPI` · `PostgreSQL` · `SOAP / 1C ERP integration` · `LLM function-calling` ·
 `Next.js` · `PWA` · `Kotlin (Android)` · `Socket.IO` · `Web Push (VAPID)` · `Docker` ·
 `process-based service orchestration`
-
-## Scale & results
-
-- **~2,000 retail outlets** served by the platform.
-- **500-700 orders/day** processed.
-- **~50 active users** across field sales and office.
-- Replaced manual order entry and disconnected reporting with an integrated, ERP-synced flow,
-  with a natural-language agent layer on top for ad-hoc querying and operations.
 
 ## Engineering highlights
 
