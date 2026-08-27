@@ -1,91 +1,263 @@
-# Chaban — Commercial Operating System for FMCG
+# AI Chaban2 — Commercial Operating Platform for Field Sales & Distribution
 
-> The commercial **operating system** of a large FMCG producer: one platform where field
-> sales reps, merchandisers, supervisors, managers, analysts, and leadership all do their
-> daily work - with AI woven through it, not bolted on. Owned and built end-to-end as the
-> sole technical engineer.
+> A production field-sales and commercial-operations platform for a dairy producer: offline mobile workflows for sales reps, bidirectional 1C ERP integration, KPI and motivation, management BI, forecasting, merchandising computer vision, and self-hosted AI services.
 
 ![Chaban platform architecture](../assets/chaban-architecture.png)
 
-## Business impact
+## What the platform is
 
-- **~2,000 retail outlets** and **500-700 orders/day** flow through the platform into the
-  1C ERP - order capture went from paper and phone calls to a ~2-minute digital flow.
-- **One system for every commercial role** (~50 daily field users plus office and leadership):
-  reps sell from an offline-first PWA, merchandisers feed the CV pipeline from a native
-  Android app, managers steer by a 26-tab BI dashboard, leadership sees KPI in real time.
-- **A single ERP-synced source of truth** replaced spreadsheets, calls, and disconnected
-  reports - with natural-language agents on top so non-technical staff query data and
-  trigger actions by asking.
+AI Chaban2 is primarily a **field-sales and commercial-operations platform**, not an AI demo.
+Its production core is the daily workflow of field sales representatives: routes, GPS-stamped visits,
+orders, cash receipts, returns, customer debt, stock visibility, audits and notes — synchronized with
+1C ERP and available offline.
 
-## One platform, every role
+Above that transactional layer sit:
 
-| Role | Where they work | What they get |
-|---|---|---|
-| Field sales reps (~50) | Offline-first **PWA** | orders, client cards, debts, stock, personal KPI, chat - fully functional without connectivity |
-| Merchandisers | **Native Android (Kotlin)** app | in-store shelf photo capture feeding the [CV pipeline](https://github.com/swd07/retail-shelf-detection) |
-| Supervisors | Web | per-rep performance, returns, client coverage |
-| Managers & analysts | **BI dashboard - 26 tabs** | plan/fact, ABC/XYZ, debt, returns, service level, nine KPI/motivation views, forecast accuracy |
-| Leadership | Real-time dashboards + reports | company-wide KPI, share of shelf, forecast vs. fact |
-| Operations | Control panel + [monitoring agent](infra-monitoring-agent.md) | service health, deploys, incidents pushed to mobile chat |
-| Everyone | Built-in **messenger** | dm/group/channel/bot rooms; agents post alerts where people already talk |
+- a **12-scheme KPI and motivation engine**;
+- a **13-tab management BI suite**;
+- daily demand forecasting and planning support;
+- a production computer-vision merchandising pipeline;
+- self-hosted LLM agents and infrastructure monitoring.
 
-## Problem
+By August 2026, **98% of company orders in 1C carried a platform-generated identifier** — about
+**9k orders/month** — making Chaban2 the primary order-entry channel for the commercial team.
 
-The producer ran field sales and in-store merchandising across a large retail network on manual,
-fragmented tooling - paper/spreadsheet order capture, no structured merchandising compliance, and
-analytics disconnected from the company's ERP. The objective was a single platform that:
+## Users & scale
 
-- captures and manages orders through their full lifecycle,
-- integrates bidirectionally with the company's **1C-based ERP**,
-- gives operations a control surface for monitoring and deployment,
-- and lets non-technical staff query and act on the data in natural language.
+- **42 accounts**, including **21 active field reps**, 4 supervisors, 3 merchandisers, managers,
+  analyst, directors and platform administrators.
+- Approximately **1,500 active retail outlets** in a typical month.
+- **9–11k orders/month** in the ERP; 8,699 platform orders during 1–27 Aug 2026.
+- About **13k GPS-stamped visits/month**; 50k+ visits recorded in total.
+- **30k+ cash receipts** and **~10k returns** posted through the platform since early 2026.
+- **103 GB PostgreSQL**, approximately **278M rows** across the production database.
+- **6k+ merchandising photos**, ~320k OCR calls, one H200 used for self-hosted AI inference.
+
+## Field Sales
+
+The PWA is the working application for field sales representatives. It supports:
+
+- daily route and customer list;
+- mandatory visit start/end with GPS before order entry;
+- customer card with debt and unpaid invoices;
+- product catalog, price types, discounts, agreements and VAT;
+- warehouse availability;
+- order creation, editing and history;
+- cash receipt creation with FIFO allocation against invoices;
+- product returns by invoice or manually;
+- OOS marks and shelf-price capture;
+- store photos and store attributes;
+- outlet audit checklist;
+- notes, surveys and Web Push reminders for unsent documents;
+- personal KPI / plan-vs-fact views and online chat.
+
+Orders, cash receipts and returns are posted from the platform into **1C ERP** through SOAP services.
+
+## Offline Mobile
+
+The field-sales PWA is **local-first**, not just an application shell with cached pages.
+
+Dexie / IndexedDB stores:
+
+- clients;
+- SKUs and prices;
+- price types, discounts and agreements;
+- unpaid invoices and debt-related data;
+- order, receipt and return drafts;
+- visit/GPS events and notes;
+- a typed transactional outbox.
+
+A 13-step prefetch downloads working reference data before field use. The outbox handles
+`order | receipt | return | visit_start | visit_end | client_gps` with exponential backoff,
+20 attempts, dead-letter state, send locks and UUID request IDs. Server-side duplicate controls
+protect document posting.
+
+**45.8k of 46.5k recorded platform orders were created in offline mode.** Reps can continue the
+core sales workflow without connectivity; KPI and chat remain online-only.
+
+## KPI & Motivation
+
+Twelve production motivation schemes are computed from ERP-backed sales, debt and planning data.
+They cover areas including:
+
+- overdue receivables / debt;
+- returns;
+- sales plans by product category;
+- distribution / MML;
+- supplier programs;
+- contract programs;
+- special commercial tasks;
+- total compensation calculation.
+
+Thresholds are editable in the UI, field reps see their own results on mobile, and supervisors /
+managers receive role-scoped views. A rep rating provides plan-attainment comparison.
+
+## BI & Management Analytics
+
+The management dashboard contains **13 production analytical areas** with common filters and
+role/team scoping:
+
+- sales overview: volume, revenue, gross profit, plan %, active customers;
+- plan / fact and motivation;
+- forecast;
+- service level and under-fulfilment reasons;
+- geographic / district analysis;
+- customer clusters A–F;
+- visit map and route coverage;
+- ABC/XYZ product analysis;
+- receivables aging;
+- returns by reason / rep / product / customer;
+- store-card completeness;
+- churn / customer-risk analysis;
+- configurable pivot/report builder.
+
+The platform can also generate management PPTX reports. Dashboard query results are cached in Redis
+for 180 seconds; supervisors are scoped to their own teams.
+
+## Forecasting & Planning
+
+A daily **Prophet-based demand forecast** runs by SKU with holiday, promotion and weather inputs,
+then allocates forecast quantities down to customers and feeds planning / customer recommendations.
+A separate "today's norm" calculation tells reps what volume is needed to hit monthly targets.
+
+This feature is intentionally not oversold: measured forecast quality is currently weak
+(**WAPE ~57% in the audited evaluation**) and is treated as an area for improvement rather than a
+success metric. Procurement and production planning are not part of the production platform.
+
+## Merchandising AI
+
+The merchandising module is a separate native Android workflow integrated into the same business
+platform:
+
+**Kotlin / Compose terminal (Room + WorkManager, offline capture)**
+→ ingest API (JWT, SHA-256 dedup, MinIO)
+→ analysis queue
+→ GPU pipeline
+→ annotation / metrics store
+→ office control center.
+
+The recognition stack combines:
+
+- GroundingDINO product detection;
+- Qwen2.5-VL OCR / package reading;
+- Qwen3-Embedding-8B + Qdrant dense catalog retrieval;
+- DINOv2 visual k-NN;
+- fine-tuned ArcFace retrieval;
+- deterministic multimodal fusion and evidence gates.
+
+Model and gate changes move through **off → shadow → active** using stratified golden sets and
+pre-defined acceptance / kill thresholds.
+
+Audited results:
+
+- **95.8% brand precision**;
+- **73.1% SKU precision** end-to-end;
+- **6k+ photos** processed;
+- pilot scope of **40 outlets / 3 merchandising users**.
+
+The office control center exposes share of shelf, assortment presence, competitors, price-tag
+analysis, review/unknown inbox and catalog management. The engineering pipeline is production;
+market coverage remains pilot-scale.
+
+→ [Detailed retrieval & CV case study](shelf-detection.md)
+
+## AI Agents & Operations
+
+The platform includes self-hosted, tool-calling agents rather than unconstrained chatbots:
+
+- **Director agent** — SQL tools over sales, plans, receivables, returns and merchandising data;
+- **KPI agent** — server-scoped access to individual KPI data with numeric output validation and
+  deterministic fallback;
+- **Security / infrastructure bot** — 31 read-only operational tools plus minute-level monitoring
+  and alerts into the corporate chat;
+- **Dashboard assistant** — answers from the selected dashboard context rather than unrestricted DB access.
+
+The agent infrastructure is production, but current business adoption is low; it should not be
+represented as a heavily used daily workflow.
+
+## 1C ERP Integration
+
+The integration is bidirectional.
+
+### 1C → Chaban2
+
+1C pushes **15 document/data types** into the platform as JSON envelopes, including orders,
+shipments/sales, receipts, receivables, stock, prices, agreements, discounts, clients, products and
+sales representatives. More than **145k inbound envelopes** were present in the audited production
+system. Processing uses business-key upserts and per-type rollback boundaries.
+
+### Chaban2 → 1C
+
+The platform posts:
+
+- orders;
+- cash receipts;
+- returns
+
+through SOAP web services, then reconciles platform documents against the ERP mirror.
+
+In Aug 2026, **98% of ERP orders originated from the platform**. Recorded order-send failure rate was
+**1.7%**, with failed sends reprocessed and no remaining failed documents in the audited snapshot.
+
+## Business Impact — Verified Only
+
+The strongest measurable effect is **workflow adoption**, not claimed sales uplift.
+
+- Platform-originated share of company ERP orders grew from effectively zero at the start of 2026
+  to **98% by Aug 2026**.
+- The system processed approximately **9k orders/month**, 30k+ cash receipts and ~10k returns.
+- Field execution became measurable through **50k+ GPS-stamped visits**.
+- The platform exposes debt, plans, KPI and management analytics from a shared ERP-backed data model.
+- Self-hosted AI inference removed production dependence on external AI APIs; the exact financial
+  saving was not baselined.
+
+### What is deliberately *not* claimed
+
+- No claim that the platform caused sales growth: YoY volume growth began before platform order
+  adoption, so causality is not supported by the data.
+- No claim for hours/FTE/cost saved because there is no reliable before/after baseline.
+- No claim that internal chat replaced WhatsApp/phone workflows; human chat usage is limited.
+- No claim that AI agents are used by leadership every day; current usage is low.
 
 ## Architecture
 
-The system evolved from an initial monolith into modular services behind a unified API:
+```text
+Field reps / supervisors / managers / merchandisers / directors
+        ↓
+PWA / Web / Android / Chat
+        ↓
+nginx
+        ↓
+Next.js route handlers + FastAPI services
+        ↓
+PostgreSQL / Redis / Qdrant / MinIO
+        ↓
+1C ERP (JSON inbound + SOAP outbound)
 
-- **Order & sales management** - Python / FastAPI backend over PostgreSQL, covering order
-  creation, validation, status flow, and reporting.
-- **ERP integration (SOAP)** - bidirectional document exchange with the 1C ERP over SOAP web
-  services. A key engineering lesson here was establishing a **single source-of-truth mapping**
-  for document identity (tracing a concrete document end-to-end rather than guessing from
-  heuristics), which removed a whole class of reconciliation bugs.
-- **Operations control panel** - surfaces service health, deployments, and security/monitoring
-  signals for the running platform.
-- **LLM agents** - a set of **function-calling assistants** (an in-platform KPI/SQL agent plus
-  separate director and per-rep agents) exposing **~20+ tools in total** over the platform's data
-  and operations. Users ask questions and trigger actions in natural language; each agent maps
-  intent to the correct tool with structured arguments.
-- **Two mobile clients** - an installable **PWA** (Next.js) for field sales reps (order capture and
-  web-push alerts) and a **native Android (Kotlin)** app for merchandisers (in-store shelf photo
-  capture, feeding the computer-vision pipeline).
-- **Real-time messenger** - an in-house **Socket.IO** chat with `dm` / `group` / `channel` / `bot` /
-  `support` room types, online presence, attachments, role-based access control, and web-push when
-  the chat is closed - available on both web and mobile. It also serves as the delivery channel for
-  automated agent alerts (bot rooms): the monitoring agent, for example, posts incidents there so
-  they arrive in the operator's mobile chat.
+AI / ML host:
+vLLM Qwen2.5-VL-72B + Qwen3.6-35B
+Qwen3-Embedding-8B
+GroundingDINO · DINOv2 · ArcFace · OCR · Whisper
+        ↓
+H200 self-hosted inference
+```
 
-## My role
+## My Role
 
-**Sole technical owner.** I made the architectural decisions and implemented the full stack:
-backend services, data model, the SOAP/ERP integration, the agent/tool layer, the control panel
-integration, and production deployment and operations.
+**Technical Owner / platform architect / Architecture Review Board chair.** I owned the platform
+architecture and production contour, ran architecture/governance decisions, operated the production
+hosts/backups/secrets, and remained hands-on in key engineering areas including merchandising CV
+guardrails/evaluation, security monitoring, ERP exchange fixes and production handover.
 
-## Stack
+The core business platform was implemented by a development team under this architecture and delivery
+process. Git identity before July 2026 does not reliably separate individual authorship, so this case
+study deliberately describes the platform as **architected and technically owned**, not personally
+written line-by-line by one engineer.
 
-`Python` · `FastAPI` · `PostgreSQL` · `SOAP / 1C ERP integration` · `LLM function-calling` ·
-`Next.js` · `PWA` · `Kotlin (Android)` · `Socket.IO` · `Web Push (VAPID)` · `Docker` ·
-`process-based service orchestration`
+## Tech Stack
 
-## Engineering highlights
-
-- **Integration discipline:** diagnosing ERP exchange issues by tracing concrete document
-  identifiers end-to-end instead of relying on heuristics.
-- **Agent design:** bounded, well-typed tool surfaces (~20+ tools across the assistants) rather than
-  an open-ended free-text agent - predictable, auditable, and safe to expose to non-technical users.
-- **Operability:** health monitoring, supervised processes, and a deployment control surface so a
-  single engineer can run the platform reliably.
-- **Operated, not just built:** the platform runs under a separate self-hosted
-  [monitoring / alerting agent](infra-monitoring-agent.md) that watches services, PM2, GPU, and
-  inference endpoints and pushes incidents to a mobile chat.
+`Python` · `FastAPI` · `SQLAlchemy` · `Next.js` · `React` · `Dexie / IndexedDB` · `Socket.IO` ·
+`PostgreSQL 16` · `PgBouncer` · `Redis` · `Qdrant` · `MinIO` · `Kotlin` · `Jetpack Compose` ·
+`Room` · `WorkManager` · `1C SOAP / JSON integration` · `vLLM` · `Qwen2.5-VL` · `Qwen3.6` ·
+`Qwen3-Embedding` · `GroundingDINO` · `DINOv2` · `ArcFace` · `PyTorch` · `Prophet` · `nginx` ·
+`PM2` · `systemd` · `Docker` · `Prometheus / Grafana`
