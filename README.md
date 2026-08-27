@@ -1,4 +1,4 @@
-# Applied AI Engineer / AI Platform Architect - Portfolio
+# Applied AI Engineer / AI Solutions Architect - Portfolio
 
 I design and ship **production AI systems end-to-end** - from backend architecture,
 data modelling and ML pipelines to GPU inference infrastructure, LLM agent layers,
@@ -8,10 +8,10 @@ I work as the **sole technical owner** of several AI products: I make the
 architectural decisions, write code across the stack, run self-hosted inference
 infrastructure, integrate with business systems, and operate the systems in production.
 
-My focus areas are **computer vision pipelines**, **LLM agents / function-calling
-systems**, **real-time voice assistants**, **ERP and business-system integrations**,
-and **AI-powered product interfaces** - with a strong bias toward measurable results,
-honest evaluation, and safe gated rollouts rather than demo-only AI.
+My focus areas are **production retrieval and multimodal AI systems**, **computer vision pipelines**,
+**LLM agents / function-calling systems**, **real-time voice assistants**, **ERP and business-system
+integrations**, and **AI-powered product interfaces** - with a strong bias toward measurable results,
+honest evaluation, explainable decisions, and safe gated rollouts rather than demo-only AI.
 
 > **Note on code access:** most production code is private because these systems
 > run inside commercial environments and include business integrations, infrastructure
@@ -28,14 +28,14 @@ honest evaluation, and safe gated rollouts rather than demo-only AI.
 
 [![Shelf-detection pipeline, live output on a real store shelf](assets/shelf-detection-live.jpg)](projects/shelf-detection.md)
 
-*One real shelf photo through the CV pipeline: localized packs, brand/SKU labels, price-tag reads — and explicit `unknown` where evidence is insufficient (abstaining beats a confident wrong answer). Details: [Shelf Detection deep-dive](projects/shelf-detection.md).*
+*One real shelf photo through the production retrieval + CV pipeline: localized packs, brand/SKU labels, price-tag reads — and explicit `unknown` where evidence is insufficient (abstaining beats a confident wrong answer). Details: [Shelf Detection deep-dive](projects/shelf-detection.md).*
 
 ## Table of contents
 
 | Project | One-liner | Deep-dive |
 |---|---|---|
 | **Chaban** | The commercial operating system of a large FMCG producer - orders, CV merchandising, BI/KPI, agents; ~2,000 outlets, 500-700 orders/day | [projects/chaban.md](projects/chaban.md) |
-| **Shelf Detection** | Computer-vision merchandising service + mobile app (share-of-shelf analytics) | [projects/shelf-detection.md](projects/shelf-detection.md) |
+| **Shelf Detection** | Production retrieval + multimodal shelf intelligence: Qdrant dense retrieval, DINOv2/ArcFace visual matching, explainable fusion and guardrails | [projects/shelf-detection.md](projects/shelf-detection.md) |
 | **BOOMi** | Beverage brand - 3D web experience, generative video, social Business API integration | [projects/boomi.md](projects/boomi.md) |
 | **Jarvis** | Real-time streaming voice assistant (STT → LLM → TTS) | [projects/jarvis.md](projects/jarvis.md) |
 | **AIOps Monitoring Agent** | Self-hosted infra watcher with rule-based detectors, LLM responder, and mobile alerts | [projects/infra-monitoring-agent.md](projects/infra-monitoring-agent.md) |
@@ -66,42 +66,59 @@ mobile and web products, agents, deployment, and production operations.
 
 ---
 
-## Shelf Detection - Merchandising Computer-Vision Service + Mobile App
+## Shelf Detection - Production Retrieval & Multimodal Shelf Intelligence
 
 ![Shelf detection CV pipeline](assets/shelf-detection-pipeline.png)
 
-**Problem.** Measure on-shelf reality - share of shelf, assortment coverage, competitor presence,
-package/format mix - directly from photos taken by field merchandisers, at scale, without manual
-tagging.
+**Problem.** Turn field-merchandiser shelf photos into reliable share-of-shelf, assortment,
+competitor and SKU analytics. The production catalog contains **1,345 SKUs** across own and
+competitor brands, including visually similar siblings that differ only by weight, fat percentage,
+flavour or package format. A wrong confident own-vs-competitor decision is worse than returning
+`unknown`, so the pipeline is designed to abstain when evidence is insufficient.
 
-**Architecture.** A staged, asynchronous CV pipeline:
-- **Mobile capture app** (native Android, Kotlin) → ingestion API → durable **work queue** → async worker.
-- **Object detection** (YOLO / open-vocabulary detection) to localize product packs on the shelf.
-- **OCR + Vision-Language model** pass to read brand/label text from each crop.
-- **Visual embeddings** (DINOv2 ViT-L/14) feeding a **KNN gallery** of confirmed products.
-- **Retrieval-augmented matching** over a **vector database (Qdrant)** for SKU identification.
-- **Rule-based fusion + guardrail layer** that combines OCR, retrieval, and visual signals, and
-  deliberately abstains (honest "Unknown") rather than emitting confident-but-wrong labels.
-- **Self-hosted GPU inference** on an **NVIDIA H200** for detection, embeddings, OCR, and VLM.
+**Production architecture.** A staged, asynchronous, fully self-hosted pipeline:
+- **Mobile capture app** (native Android, Kotlin) → ingestion API → durable work queue → async worker.
+- **GroundingDINO** localizes product packs.
+- **Qwen2.5-VL-72B** reads OCR text and package evidence.
+- OCR text is embedded by self-hosted **Qwen3-Embedding-8B** (4096-d normalized embeddings).
+- **Qdrant** performs cosine dense retrieval over the 1,345-SKU catalog at **top-20**.
+- An **attribute-aware reranker** uses weight, fat percentage, category and brand evidence.
+- **DINOv2 ViT-L/14** performs visual k-NN against ~18.9k confirmed crops.
+- A fine-tuned **ArcFace** metric-learning encoder adds an independent visual vote over ~9.1k references.
+- A deterministic **fusion + guardrail layer** combines retrieval, OCR and visual evidence and
+  deliberately falls back to `unknown` rather than forcing a low-confidence match.
 
-**My role.** Designed and built the entire pipeline: detection integration, the OCR/VLM and
-embedding services, the retrieval/matching layer, the guardrail and within-shelf disambiguation
-logic, the training/evaluation harness, and the catalog-normalization tooling. I treat the LLM as
-a **teacher/auditor** for labeling, never as uncontrolled production inference.
+The LLM **does not select the final SKU**. It reads text/package evidence; final identity is decided
+by an explainable pipeline with stored scores, thresholds and decision paths.
 
-**Stack.** PyTorch, YOLO / open-vocabulary detectors, DINOv2, Vision-Language OCR, Qdrant,
-FastAPI, PostgreSQL, self-hosted S3-compatible object storage, Docker.
+**Evaluation & rollout.** Retrieval/model changes are treated as production changes, not notebook
+experiments:
+- stratified human-labelled golden sets and cross-store validation;
+- recall@1 / recall@5 and FPR-anchored precision for retrieval models;
+- pre-registered acceptance / kill thresholds with Wilson confidence intervals;
+- a **47k-box production replay harness** importing the actual production decision module;
+- every candidate layer ships **off → shadow → active** and can be killed before affecting users.
 
 **Results.**
-- Detection **F1 improved 0.68 → 0.91 on unseen (out-of-sample) photos**.
-- **Catalog normalization 34 → 20 categories**, removing duplicated/ambiguous classes.
-- **Eliminated ~300 false positives** via a targeted regex/normalization fix in the label path.
-- Trained package classifier reaching **~92% overall accuracy** with leak-free, grouped-by-image
-  evaluation and cross-store stress testing.
-- Engineered a **shadow → active rollout discipline** (every model/guardrail change runs in
-  shadow and is measured on a real population before it can affect production metrics).
+- **Brand precision: 95.8%** on confirmed end-to-end evaluation.
+- **SKU precision: 73.1% end-to-end**, versus ~29% for bare retrieval alone.
+- Fine-tuned ArcFace cross-store **Recall@1: 84.1%**, versus 26.4% for the DINOv2 baseline in the same evaluation setup.
+- ~**320k OCR calls** processed and ~**108k shadow evaluations** recorded in the production system.
+- Multiple reranker / encoder candidates were rejected by pre-defined evaluation gates before production rollout.
 
-→ [Full write-up](projects/shelf-detection.md)
+**My role.** Designed and built the retrieval/matching architecture, OCR/VLM and embedding services,
+multimodal fusion and guardrails, training/evaluation harness, catalog-normalization tooling and
+production rollout discipline.
+
+**Stack.** Python, FastAPI, PyTorch, GroundingDINO, Qwen2.5-VL-72B, Qwen3-Embedding-8B,
+Qdrant, DINOv2, ArcFace, PostgreSQL, self-hosted S3-compatible object storage, Docker,
+NVIDIA H200 inference.
+
+> **Terminology note:** this is a production retrieval-augmented recognition system, not a classic
+> document-RAG chatbot. Retrieved catalog candidates feed an explainable matching pipeline; the LLM
+> does not generate a final answer from retrieved documents.
+
+→ [Full production retrieval / multimodal AI deep-dive](projects/shelf-detection.md)
 → [Public case study + runnable examples](https://github.com/swd07/retail-shelf-detection)
 
 ---
@@ -242,6 +259,10 @@ API, marketing analytics, campaign reporting, AI-assisted analysis.
 
 - **Self-hosted GPU inference** on **NVIDIA H200** - detection, embeddings, OCR, and
   vision-language and language models served locally for cost control and data residency.
+- **Production vector retrieval** - self-hosted Qwen embedding service + Qdrant dense search,
+  explicit confidence thresholds, attribute reranking, explainable fusion and abstention.
+- **Retrieval/model evaluation** - cross-store splits, recall@K, FPR-anchored precision,
+  stratified golden sets, pre-registered kill thresholds and production replay testing.
 - **Self-hosted services** across the stack: relational database (**PostgreSQL**),
   **S3-compatible object storage**, **vector database (Qdrant)**, reverse proxy / TLS,
   process-based service orchestration.
@@ -294,12 +315,15 @@ Playwright, Docker.
 
 **Languages:** Python, TypeScript / JavaScript, SQL.
 
-**ML / CV:** PyTorch, YOLO & open-vocabulary object detection, DINOv2 visual embeddings,
-Vision-Language models, OCR, vector retrieval, KNN matching, Qdrant, ArcFace metric learning,
+**ML / CV:** PyTorch, YOLO & open-vocabulary object detection, GroundingDINO,
+DINOv2 visual embeddings, Vision-Language models, OCR, ArcFace metric learning,
 classifier training & calibration.
 
-**LLM / Agents:** function-calling / tool-use agent layers, multi-tool orchestration, LLM-as-judge
-evaluation, real-time voice (Pipecat, streaming STT/LLM/TTS).
+**Retrieval:** Qwen3-Embedding-8B, dense vector retrieval, Qdrant, cosine similarity,
+attribute-aware reranking, visual k-NN, recall@K evaluation, confidence gating.
+
+**LLM / Agents:** Qwen / vLLM, OpenAI-compatible APIs, function-calling / tool-use agent layers,
+multi-tool orchestration, LLM-as-judge evaluation, real-time voice (Pipecat, streaming STT/LLM/TTS).
 
 **Backend:** FastAPI, REST APIs, async work queues, SOAP/ERP (1C) integration, Payload CMS 3.
 
@@ -318,7 +342,7 @@ flagging, CI/deploy scripting, observability & health monitoring.
 
 ## Contact
 
-**Eduard Haraev**  
+**Eduard Kharaev**  
 GitHub: [swd07](https://github.com/swd07)  
 Email: [haraev87@gmail.com](mailto:haraev87@gmail.com)
 
