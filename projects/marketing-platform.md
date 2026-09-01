@@ -8,6 +8,12 @@ For a regional consumer-brand launch, the business needed more than a website an
 
 The goal was to replace disconnected reports and vanity metrics with one repeatable operational workflow for brand growth.
 
+## Consumer-facing brand experience
+
+![Interactive 3D product experience](../assets/marketing-platform-3d-experience.png)
+
+The project also included the consumer-facing brand layer: an interactive 3D product experience built with Next.js and React Three Fiber, alongside generative-video workflows and programmatic social publishing.
+
 ## What the platform does
 
 ```text
@@ -40,7 +46,15 @@ From the showcased 30-day reporting window:
 
 These figures are presented as observed platform measurements, not as causal attribution of all growth to the software itself.
 
+## Growth snapshot
+
+![Marketing platform growth summary](../assets/marketing-platform-growth-summary.jpg)
+
+The platform combines website traffic and Instagram growth in one reporting view, making period-over-period changes visible alongside tracked website actions.
+
 ## Content intelligence
+
+![Instagram content intelligence](../assets/marketing-platform-content-intelligence.jpg)
 
 The reporting layer evaluates individual posts rather than relying only on account-level averages. It tracks:
 
@@ -55,6 +69,8 @@ This allows the team to move from “we posted a lot” to **which content actua
 
 ## Traffic attribution & audience
 
+![Traffic attribution and audience growth](../assets/marketing-platform-traffic-attribution.jpg)
+
 Website analytics are normalized into the same reporting layer as social growth. The platform exposes:
 
 - direct traffic,
@@ -68,16 +84,13 @@ Website analytics are normalized into the same reporting layer as social growth.
 
 Campaign dates and brand activities can then be reviewed alongside actual traffic and follower movement.
 
-## Search demand & query intelligence
+## Search visibility
 
-The search layer groups demand by topic and exposes real query-level signals. It can separate:
+![Google search performance](../assets/marketing-platform-google-search.png)
 
-- branded demand,
-- geographic demand,
-- category/product demand,
-- other long-tail discovery queries.
+The search layer exposes clicks, impressions, CTR, average position, branded demand and country-level distribution from Google Search Console data.
 
-For each query the system can surface clicks, impressions and average position. This makes search visibility a measurable **brand-intent signal**, not a black box.
+Search visibility becomes a measurable **brand-intent signal**, not a black box.
 
 ## Architecture
 
