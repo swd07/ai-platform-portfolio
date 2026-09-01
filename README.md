@@ -24,11 +24,10 @@ projects include systems I built independently end-to-end.
 |---|---|---|
 | **AI Chaban2** | Commercial operating platform: offline field sales, 1C ERP, KPI, BI, forecasting, merchandising AI and agents | [Portfolio case study](projects/chaban.md) |
 | **Retail Shelf Detection** | Production retrieval + multimodal recognition with Qdrant, DINOv2/ArcFace, guardrails and abstention | **[Technical case-study repository](https://github.com/swd07/retail-shelf-detection)** |
+| **AI Marketing & Brand Growth Platform** | Multi-source marketing intelligence: Instagram, website traffic, search visibility, content analytics, influencer workflow and AI-assisted reporting | [Case study](projects/marketing-platform.md) |
 | **AIOps Monitoring Agent** | Deterministic infrastructure watcher + LLM responder + mobile incident alerts | [Case study](projects/infra-monitoring-agent.md) |
 | **Jarvis** | Real-time streaming voice assistant: STT → LLM → TTS over WebRTC | [Case study](projects/jarvis.md) |
 | **Fitness Marathon Platform** | 0→1 coach/client product with private media, chat, RBAC and full-stack delivery | [Case study](projects/fitness-platform.md) |
-| **BOOMi** | 3D consumer web experience, generative video and social API integration | [Case study](projects/boomi.md) |
-| **Social Media Intelligence** | Influencer discovery + Instagram/Search/traffic analytics | [Case study](projects/social-media-intelligence.md) |
 
 ---
 
@@ -113,6 +112,53 @@ This portfolio intentionally does **not** duplicate the full technical write-up.
 
 ---
 
+## AI Marketing & Brand Growth Platform
+
+A production **marketing intelligence and brand-growth platform** built around a real consumer
+beverage brand. It combines website analytics, Instagram performance, search visibility,
+content-level reporting, influencer discovery and AI-assisted campaign analysis in one operational
+workflow.
+
+**Representative measured outcomes from the showcased 30-day window**
+
+- **1,068 website visits** — **+88%** vs. the previous comparable period.
+- **906 unique visitors** — **+93%**.
+- **4,531 Instagram followers** with **+2,859 followers added during the period**.
+- **98 Instagram posts** analyzed at content level.
+- **247 Google search clicks** from **1,403 impressions**.
+- **17.6% Google Search CTR** and **2.4 average search position**.
+
+These are observed platform measurements, not causal attribution of all growth to the software.
+
+### Consumer-facing 3D experience
+
+![BOOMi interactive 3D product experience](assets/marketing-platform-3d-experience.png)
+
+The same work also included a production **Next.js / React Three Fiber** brand experience with
+interactive 3D product presentation and a generative-video workflow.
+
+### Growth & content intelligence
+
+![Marketing platform growth summary](assets/marketing-platform-growth-summary.jpg)
+
+The reporting layer joins website traffic, lead actions and Instagram audience growth into one
+period-over-period view.
+
+![Instagram content intelligence](assets/marketing-platform-content-intelligence.jpg)
+
+At content level, the platform tracks format, likes, comments, views, engagement rate and relative
+performance to surface which posts actually gain attention.
+
+### Cross-channel reporting
+
+The full platform also includes acquisition-source analysis, device/geography breakdowns and Google
+Search Console reporting for clicks, impressions, CTR, average position and branded demand.
+
+→ **[Open the full marketing-platform case study with all production screenshots](projects/marketing-platform.md)**  
+→ [BOOMi web / creative layer](projects/boomi.md) · [Social intelligence deep dive](projects/social-media-intelligence.md)
+
+---
+
 ## AIOps Monitoring Agent
 
 A hybrid monitoring system combining deterministic detectors with an LLM responder. It watches
@@ -149,13 +195,21 @@ CSRF, file-isolation and trainer-scope security coverage.
 
 ---
 
-## BOOMi & Social Intelligence
+## Additional brand / creative engineering
 
-Consumer-brand work spanning a React Three Fiber / Next.js 3D web experience, generative-video
-workflow, Instagram Business/Graph API integration, influencer discovery and multi-source campaign
-analytics.
+### BOOMi — Consumer Web & Generative Media
 
-→ [BOOMi](projects/boomi.md) · [Social Media Intelligence](projects/social-media-intelligence.md)
+Consumer-brand work spanning a **React Three Fiber / Next.js 3D web experience**, generative-video
+workflow and social publishing integration.
+
+→ [BOOMi case study](projects/boomi.md)
+
+### Social Media Intelligence
+
+Influencer discovery, authenticity filtering, Instagram Business API operations and multi-source
+campaign analytics used as part of the broader marketing platform.
+
+→ [Social Media Intelligence case study](projects/social-media-intelligence.md)
 
 ---
 
@@ -169,14 +223,18 @@ analytics.
   replay testing, pre-registered acceptance/kill thresholds and explicit abstention.
 - **Safe rollout:** `off → shadow → active`, observability, health checks, rollback and incident
   monitoring.
-- **Data / integration:** PostgreSQL, Qdrant, Redis, MinIO/S3-compatible storage, 1C SOAP/JSON.
+- **Data / integration:** PostgreSQL, Qdrant, Redis, MinIO/S3-compatible storage, 1C SOAP/JSON,
+  Instagram Business API, Yandex Metrika and Google Search Console.
+- **Growth / content systems:** multi-source marketing analytics, content-performance intelligence,
+  generative-media workflows and programmatic publishing.
 
 ## Tech stack
 
 **AI / ML:** PyTorch · GroundingDINO · DINOv2 · ArcFace · Qwen2.5-VL · Qwen3-Embedding · vLLM · Qdrant · Prophet · Whisper  
 **Backend / Data:** Python · FastAPI · PostgreSQL · Redis · MinIO · REST · SOAP / 1C  
 **Frontend / Mobile:** TypeScript · Next.js · React · PWA · Dexie/IndexedDB · Kotlin · Jetpack Compose · Room · WorkManager  
-**Realtime / Infra:** Socket.IO · WebRTC · Docker · nginx · PM2/systemd · NVIDIA H200 · Prometheus/Grafana
+**Realtime / Infra:** Socket.IO · WebRTC · Docker · nginx · PM2/systemd · NVIDIA H200 · Prometheus/Grafana  
+**Marketing / Growth:** Instagram Business / Graph API · Google Search Console · Yandex Metrika · Apify · generative video
 
 ---
 
