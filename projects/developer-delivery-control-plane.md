@@ -133,27 +133,54 @@ The model receives repository status and a bounded diff and is prompted to descr
 from the user's point of view**, avoiding implementation jargon where possible. The generated text is
 only a suggestion; the actual Git operation remains an explicit control-plane action.
 
-## Architecture
+## Release architecture
 
 ```mermaid
 flowchart LR
-    A[Preview working copies] --> C[Delivery Control API]
-    B[Staging / Production copies] --> C
+    DEV[Developer changes] --> PREVIEW[Preview environment]
 
-    C --> D[Git state / diff / history]
-    C --> E[Commit / merge / cherry-pick]
-    C --> F[Dependency preflight]
-    C --> G[Build orchestration]
-    C --> H[PM2 restart / logs / health]
+    PREVIEW --> INSPECT[Repository state + diff]
+    INSPECT --> SELECT{Release scope}
 
-    I[Next.js operator UI] --> C
-    J[Self-hosted Qwen] --> K[Commit-message suggestion]
-    K --> I
+    SELECT -->|Full branch| MERGE[Merge / promote]
+    SELECT -->|Selected commits| PICK[Validated cherry-pick]
 
-    E --> L[Preview → Staging]
-    L --> M[Validated release]
-    M --> N[Production]
+    MERGE --> CONFLICT{Conflict?}
+    PICK --> CONFLICT
+
+    CONFLICT -->|Yes| RESOLVE[Resolve or abort]
+    RESOLVE --> INSPECT
+    CONFLICT -->|No| STAGING[Staging environment]
+
+    STAGING --> PREFLIGHT[Dependency preflight]
+    PREFLIGHT --> BUILD[Production build]
+    BUILD --> VERIFY_BUILD{Build passed?}
+
+    VERIFY_BUILD -->|No| STOP[Stop release + inspect logs]
+    VERIFY_BUILD -->|Yes| PROD[Production promotion]
+
+    PROD --> RESTART[PM2 restart]
+    RESTART --> HEALTH[Health + runtime verification]
+    HEALTH --> DONE[Release complete]
+
+    HEALTH -->|Failure| RECOVERY[Logs / reset / recovery]
+
+    QWEN[Self-hosted Qwen] -. commit-message suggestion .-> INSPECT
 ```
+
+The core idea is **state before action**. Promotion is not a single opaque deploy button: repository
+state is inspected first, the release unit is chosen explicitly, target dependencies are checked,
+and a failed merge/build/runtime verification becomes a visible workflow state with a recovery path.
+
+### Operational control layers
+
+`inspect → diff → select release unit → promote → preflight → build → restart → verify`
+
+The control plane joins three kinds of state that are usually split across different tools:
+
+- **source state** — branches, commits, diffs and conflicts;
+- **release state** — what is approved for staging/production and what failed during promotion;
+- **runtime state** — build result, PM2 process state, service health and operational logs.
 
 ## Safety & failure handling
 
