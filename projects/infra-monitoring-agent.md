@@ -1,8 +1,8 @@
 # AI Infrastructure Control Plane & Security Operations
 
 > A self-hosted operations layer for production AI infrastructure — combining a web control plane,
-> deterministic AIOps/security detectors, AI-model and GPU observability, incident alerting, and a
-> tool-calling Qwen assistant for investigation.
+> deterministic AIOps/security detectors, AI-model and GPU observability, incident alerting, a
+> tool-calling Qwen assistant, and a least-privilege MCP gateway for safe external AI access.
 
 > **Public case-study note:** the production repositories remain private. Internal IPs, usernames,
 > credentials, hostnames and company-specific infrastructure details are intentionally removed here.
@@ -22,13 +22,17 @@ look very different depending on the layer:
 - authentication traffic can turn into brute-force or rate-limit abuse;
 - an ERP integration can fail while the application itself still looks healthy.
 
+A second problem appeared once AI clients were allowed to inspect operations: **how do you expose useful
+production telemetry to an LLM without exposing every internal tool, secret, identity or database
+operation?**
+
 The goal became broader than monitoring: build a **single operational control layer** that helps one
 technical owner understand what is running, detect failures early, investigate them with real data,
-and surface actionable incidents without alert fatigue.
+and expose only narrowly bounded operational capabilities to AI clients.
 
 ## What I built
 
-The system has four cooperating layers.
+The system has five cooperating layers.
 
 ### 1. Operations Control Panel
 
@@ -107,6 +111,80 @@ investigation.
 Tool routing can restrict the model to the subset relevant to the current domain, reducing prompt
 size and unnecessary tool exposure while retaining a safe fallback to the full tool set.
 
+### 5. Secure MCP Access Layer
+
+A separate private **MCP server** exposes a deliberately smaller read-only surface to trusted local
+LLM/IDE clients.
+
+Instead of exporting the whole production tool module, the MCP wrapper exposes exactly **7 approved
+operations** covering:
+
+- recent security alerts;
+- top attacking/source IPs;
+- live brute-force signals;
+- SSH events;
+- service health;
+- disk usage;
+- public-IP GeoIP lookup.
+
+The important part is not the MCP protocol itself; it is the **security boundary around tool access**.
+
+#### Database-level read-only enforcement
+
+The MCP process connects with a role that has only explicitly granted `SELECT` access to the minimum
+required tables. Write prevention therefore comes from PostgreSQL privileges, not from a prompt or a
+convention that “the model should only read”.
+
+#### Explicit tool whitelist
+
+Sensitive production tools are not dynamically discoverable through `getattr` or arbitrary tool-name
+dispatch. PII- or secret-bearing operations from the broader production module are simply not exposed
+to the MCP server.
+
+This is enforced as a tested invariant.
+
+#### Validate before execution
+
+Every MCP parameter is validated before the production function is called:
+
+- bounded time windows and result limits;
+- enum validation;
+- public-IP validation;
+- SQL remains parameterized in the underlying production code;
+- shell execution uses argument lists rather than `shell=True`.
+
+#### Bounded output
+
+Responses have a configurable byte ceiling (default **24 KB**). Oversized results are truncated with
+an explicit marker rather than allowing a client to dump large operational datasets into model
+context.
+
+#### Local stdio transport + audit
+
+The MCP server does **not** listen on a network port. A trusted client launches it locally and
+communicates through stdio.
+
+Every invocation is written to a JSONL audit trail with timestamp, tool, arguments and outcome such
+as `ok`, `truncated`, `rejected_validation` or `error`.
+
+Backend exceptions are contained instead of leaking full stack traces into the model context.
+
+#### Security tests
+
+The MCP wrapper has **19 focused tests** covering the access boundary itself, including:
+
+- exact whitelist composition;
+- PII/secret tool isolation;
+- numeric and enum bounds;
+- negative IP-validation cases;
+- output truncation;
+- backend error containment;
+- audit completeness;
+- resilience when audit logging itself fails.
+
+This turns “safe tool calling” from a prompt instruction into something closer to an enforceable
+software boundary.
+
 ## Architecture
 
 ```mermaid
@@ -129,15 +207,23 @@ flowchart LR
     B --> M
     C --> M
 
-    N[Self-hosted Qwen assistant] --> O[20+ read/diagnostic tools]
+    N[Self-hosted Qwen assistant] --> O[20+ operational tools]
     O --> B
     O --> C
     O --> E
     N --> L
+
+    P[Trusted IDE / LLM client] --> Q[MCP over stdio]
+    Q --> R[7-tool explicit whitelist]
+    R --> S[Validation + output cap + audit]
+    S --> T[PostgreSQL RO / logs / health probes]
 ```
 
-The important design choice is that **LLM reasoning is downstream of deterministic observation**.
-Rules decide that something measurable happened; the model helps investigate and explain it.
+The important design choice is that **LLM reasoning is downstream of deterministic observation**, and
+external AI access receives a smaller capability surface than the internal incident assistant.
+
+Rules decide that something measurable happened; models help investigate and explain it. Access
+control remains in software and infrastructure layers rather than in natural-language instructions.
 
 ## Alert-quality engineering
 
@@ -191,6 +277,8 @@ threshold tuning instead of throwing away almost-triggered cases.
 - Dedicated chat delivery turns incidents into mobile-visible operational events instead of leaving
   them buried in server logs.
 - AI infrastructure monitoring includes an **NVIDIA H200** and self-hosted inference services.
+- The external AI access boundary exposes only **7 MCP tools** and is covered by **19 security-wrapper
+  tests**.
 
 ## Why the AI-specific detectors matter
 
@@ -204,24 +292,38 @@ host after model migrations. The OCR degradation detector protects against a mor
 Those two detectors move monitoring from simple uptime toward **behavioral observability for AI
 systems**.
 
+## Why the MCP boundary matters
+
+A production agent and an external AI client should not automatically receive the same capabilities.
+
+The internal incident assistant can operate with a broader diagnostic toolset because it runs inside
+the controlled operational workflow. A local IDE/LLM integration gets a deliberately reduced,
+read-only MCP surface.
+
+That separation demonstrates a principle I use repeatedly in agent systems:
+
+> **capabilities should be granted by execution context, not by how persuasive the prompt sounds.**
+
 ## My role
 
 Designed and built the system end-to-end: control-panel architecture and UI, monitoring inventory,
 detector logic, GPU/model observability, security telemetry, database-backed configuration and alert
-history, incident deduplication, chat delivery, self-hosted Qwen integration, tool-calling workflow and
-production operation.
+history, incident deduplication, chat delivery, self-hosted Qwen integration, tool-calling workflow,
+least-privilege MCP access layer and production operation.
 
 ## Stack
 
 `Next.js 14` · `TypeScript` · `React` · `Tailwind CSS` · `Framer Motion` · `Recharts` · `jose/JWT`  
 `Python` · `PostgreSQL` · `psycopg2` · `PM2` · `nginx` · `Linux / systemd / cron` · `Socket.IO`  
-`Qwen` · `OpenAI-compatible inference` · `NVIDIA H200` · `GPU telemetry` · `tool calling`
+`Qwen` · `OpenAI-compatible inference` · `NVIDIA H200` · `GPU telemetry` · `tool calling` · `MCP Python SDK`
 
 ## Engineering principles demonstrated
 
 - **Control plane, not dashboard:** observation, operational state and incident workflow live together.
 - **Deterministic first:** measurable detectors remain the source of truth; the LLM assists with
   interpretation rather than deciding whether infrastructure is healthy.
+- **Least privilege for agents:** database permissions, explicit tool whitelists and bounded outputs
+  constrain capability independently of prompts.
 - **AI-aware observability:** monitor model endpoints and output degradation, not only ports and CPUs.
 - **Low-noise operations:** consecutive checks, deduplication, maintenance state, near-miss logging and
   shadow rollout reduce alert fatigue.
