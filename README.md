@@ -25,7 +25,7 @@ projects include systems I built independently end-to-end.
 | **AI Chaban2** | Commercial operating platform: offline field sales, 1C ERP, KPI, BI, forecasting, merchandising AI and agents | [Portfolio case study](projects/chaban.md) |
 | **Retail Shelf Detection** | Production retrieval + multimodal recognition with Qdrant, DINOv2/ArcFace, guardrails and abstention | **[Technical case-study repository](https://github.com/swd07/retail-shelf-detection)** |
 | **AI Marketing & Brand Growth Platform** | Multi-source marketing intelligence: Instagram, website traffic, search visibility, content analytics, influencer workflow and AI-assisted reporting | [Case study](projects/marketing-platform.md) |
-| **AIOps Monitoring Agent** | Deterministic infrastructure watcher + LLM responder + mobile incident alerts | [Case study](projects/infra-monitoring-agent.md) |
+| **AI Infrastructure Control Plane & Security Operations** | Self-hosted control plane + deterministic AIOps/security watcher + H200/model observability + tool-calling Qwen incident assistant | [Case study](projects/infra-monitoring-agent.md) |
 | **Jarvis** | Real-time streaming voice assistant: STT → LLM → TTS over WebRTC | [Case study](projects/jarvis.md) |
 | **Fitness Marathon Platform** | 0→1 coach/client product with private media, chat, RBAC and full-stack delivery | [Case study](projects/fitness-platform.md) |
 
@@ -159,16 +159,38 @@ Search Console reporting for clicks, impressions, CTR, average position and bran
 
 ---
 
-## AIOps Monitoring Agent
+## AI Infrastructure Control Plane & Security Operations
 
-A hybrid monitoring system combining deterministic detectors with an LLM responder. It watches
-application services, PM2 processes, database/integration signals, GPU/host health and AI endpoints
-on a **60-second loop**, deduplicates incidents and pushes actionable alerts into mobile chat.
+A private production **control plane + autonomous AIOps/security layer** for a mixed application and
+self-hosted AI environment. The system combines a Next.js operations console, deterministic detectors,
+security telemetry, H200/model observability, mobile incident delivery and a tool-calling Qwen
+assistant for investigation.
 
-**Evidence:** 13 detector classes, ~22 health-checked endpoints plus host/process signals; production
-security/infra watcher generated 152 alerts in Aug 2026.
+**Operational coverage**
 
-→ [Full write-up](projects/infra-monitoring-agent.md)
+- **~22 health-checked endpoints** across APIs, frontends, AI inference and core infrastructure,
+  plus PM2 processes, hosts, GPU and database signals.
+- **15+ detector / alert types** covering HTTP/SSH security events, service-down/stuck states, PM2
+  crash loops, memory/disk/host failures, database anomalies, integration failures and AI-specific
+  degradation.
+- **60-second autonomous watcher** with consecutive-failure gates, resource-aware deduplication and
+  configurable thresholds.
+- **10–15 second control-panel refresh** for system health, servers, AI models, services, security,
+  logs, databases and operational status.
+- NVIDIA **H200** monitoring for VRAM, utilization, temperature, power and active GPU processes.
+- **20+ tool** self-hosted Qwen incident assistant that queries real operational data instead of
+  inventing system state.
+
+Two AI-specific detectors are especially important: **LLM endpoint drift** catches live model
+endpoints that no longer match configured inventory after migrations, while **silent OCR degradation**
+can detect quality collapse even when the OCR service itself remains technically online. New quality
+detectors can run in **shadow mode** before they are allowed to notify operators.
+
+**Production evidence:** the security/infra watcher recorded **152 alerts in Aug 2026**. In one real
+incident a preview process entered a restart storm at roughly **222 restarts/minute**; the crash-loop
+detector surfaced it on the next monitoring cycle.
+
+→ **[Full sanitized control-plane / security operations case study](projects/infra-monitoring-agent.md)**
 
 ---
 
@@ -219,6 +241,8 @@ campaign analytics used as part of the broader marketing platform.
   production ownership and technical governance.
 - **Applied AI:** multimodal retrieval, computer vision, OCR/VLM, vector search, LLM agents,
   tool calling, self-hosted inference and real-time voice.
+- **AI infrastructure / operations:** control-plane design, GPU/model observability, deterministic
+  detectors, security telemetry, incident response and AI-aware degradation monitoring.
 - **Evaluation:** golden sets, grouped/cross-store validation, recall@K, FPR-anchored precision,
   replay testing, pre-registered acceptance/kill thresholds and explicit abstention.
 - **Safe rollout:** `off → shadow → active`, observability, health checks, rollback and incident
@@ -233,7 +257,7 @@ campaign analytics used as part of the broader marketing platform.
 **AI / ML:** PyTorch · GroundingDINO · DINOv2 · ArcFace · Qwen2.5-VL · Qwen3-Embedding · vLLM · Qdrant · Prophet · Whisper  
 **Backend / Data:** Python · FastAPI · PostgreSQL · Redis · MinIO · REST · SOAP / 1C  
 **Frontend / Mobile:** TypeScript · Next.js · React · PWA · Dexie/IndexedDB · Kotlin · Jetpack Compose · Room · WorkManager  
-**Realtime / Infra:** Socket.IO · WebRTC · Docker · nginx · PM2/systemd · NVIDIA H200 · Prometheus/Grafana  
+**Realtime / Infra:** Socket.IO · WebRTC · Docker · nginx · PM2/systemd · NVIDIA H200 · Prometheus/Grafana · security telemetry · AIOps  
 **Marketing / Growth:** Instagram Business / Graph API · Google Search Console · Yandex Metrika · Apify · generative video
 
 ---
