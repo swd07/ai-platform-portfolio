@@ -26,7 +26,7 @@ projects include systems I built independently end-to-end.
 | **Retail Shelf Detection** | Production retrieval + multimodal recognition with Qdrant, DINOv2/ArcFace, guardrails and abstention | **[Technical case-study repository](https://github.com/swd07/retail-shelf-detection)** |
 | **AI Marketing & Brand Growth Platform** | Multi-source marketing intelligence: Instagram, website traffic, search visibility, content analytics, influencer workflow and AI-assisted reporting | [Case study](projects/marketing-platform.md) |
 | **AI Infrastructure Control Plane & Security Operations** | Self-hosted control plane + deterministic AIOps/security watcher + H200/model observability + tool-calling Qwen incident assistant | [Case study](projects/infra-monitoring-agent.md) |
-| **Jarvis** | Real-time streaming voice assistant: STT → LLM → TTS over WebRTC | [Case study](projects/jarvis.md) |
+| **Jarvis — Multi-Agent Orchestrator** | Voice-first executive/ops command center: WebRTC, agent registry + command queue, project intelligence, safe browser actions and delegated work | [Case study](projects/jarvis.md) |
 | **Fitness Marathon Platform** | 0→1 coach/client product with private media, chat, RBAC and full-stack delivery | [Case study](projects/fitness-platform.md) |
 
 ---
@@ -194,13 +194,30 @@ detector surfaced it on the next monitoring cycle.
 
 ---
 
-## Jarvis — Real-Time Voice Assistant
+## Jarvis — Voice-First Multi-Agent Orchestrator
 
-Streaming **STT → LLM → TTS** assistant built on Pipecat/WebRTC with tool access, profile-based
-personas and fallback voice handling. Work focused on pipeline integration, routing and latency /
-time-to-first-byte reduction.
+Jarvis evolved from a low-latency streaming voice assistant into a **human-to-agent orchestration
+layer** for the production platform. The browser voice loop is still real-time
+`WebRTC → VAD/SmartTurn → Whisper → LLM → streaming TTS`, but the important layer now sits behind it.
 
-→ [Full write-up](projects/jarvis.md)
+Jarvis maintains an **agent registry with heartbeat, current-task and queue state**, and can delegate
+allowlisted work through a persistent command lifecycle:
+
+`pending → accepted → running → done | error | cancelled`
+
+The voice assistant can ask specialized agents for operations/service health, deployment and log
+summaries, or for executive information such as portfolio status, risks, deadlines, blockers and
+project details. It checks whether an agent is live before dispatch and summarizes the returned result
+instead of exposing raw tool payloads.
+
+A separate director profile deliberately receives business/project tools rather than infrastructure
+control, while the admin profile can access operational capabilities. Jarvis can also **open approved
+pages and dashboards by voice** through a named-target allowlist rather than allowing arbitrary URLs.
+
+The Command Center HUD brings together the **agent fleet, project inventory, infrastructure/GPU
+telemetry, live activity and conversational state** on one screen.
+
+→ **[Full multi-agent orchestration + voice command-center case study](projects/jarvis.md)**
 
 ---
 
@@ -240,7 +257,7 @@ campaign analytics used as part of the broader marketing platform.
 - **Product / architecture:** discovery, 0→1 delivery, enterprise integration, mobile/web workflows,
   production ownership and technical governance.
 - **Applied AI:** multimodal retrieval, computer vision, OCR/VLM, vector search, LLM agents,
-  tool calling, self-hosted inference and real-time voice.
+  tool calling, multi-agent orchestration, self-hosted inference and real-time voice.
 - **AI infrastructure / operations:** control-plane design, GPU/model observability, deterministic
   detectors, security telemetry, incident response and AI-aware degradation monitoring.
 - **Evaluation:** golden sets, grouped/cross-store validation, recall@K, FPR-anchored precision,
@@ -257,7 +274,7 @@ campaign analytics used as part of the broader marketing platform.
 **AI / ML:** PyTorch · GroundingDINO · DINOv2 · ArcFace · Qwen2.5-VL · Qwen3-Embedding · vLLM · Qdrant · Prophet · Whisper  
 **Backend / Data:** Python · FastAPI · PostgreSQL · Redis · MinIO · REST · SOAP / 1C  
 **Frontend / Mobile:** TypeScript · Next.js · React · PWA · Dexie/IndexedDB · Kotlin · Jetpack Compose · Room · WorkManager  
-**Realtime / Infra:** Socket.IO · WebRTC · Docker · nginx · PM2/systemd · NVIDIA H200 · Prometheus/Grafana · security telemetry · AIOps  
+**Realtime / Infra:** Socket.IO · WebRTC · agent registry / command queues · Docker · nginx · PM2/systemd · NVIDIA H200 · Prometheus/Grafana · security telemetry · AIOps  
 **Marketing / Growth:** Instagram Business / Graph API · Google Search Console · Yandex Metrika · Apify · generative video
 
 ---
