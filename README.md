@@ -23,6 +23,8 @@ projects include systems I built independently end-to-end.
 | Project | What it is | Evidence / deep dive |
 |---|---|---|
 | **AI Chaban2** | Commercial operating platform: offline field sales, 1C ERP, KPI, BI, forecasting, merchandising AI and agents | [Portfolio case study](projects/chaban.md) |
+| **Beverage Operations & Supply Planning + Action Agent** | Private operational planning platform with stock/supply workflows and an embedded 11-tool self-hosted Qwen action agent | [Case study](projects/operations-supply-planning-agent.md) |
+| **Internal Developer Platform & Release Orchestration** | Delivery control plane for repository state, selective promotion, conflict handling, dependency preflight, builds and runtime restart/verification | [Case study](projects/developer-delivery-control-plane.md) |
 | **Retail Shelf Detection** | Production retrieval + multimodal recognition with Qdrant, DINOv2/ArcFace, guardrails and abstention | **[Technical case-study repository](https://github.com/swd07/retail-shelf-detection)** |
 | **AI Marketing & Brand Growth Platform** | Multi-source marketing intelligence: Instagram, website traffic, search visibility, content analytics, influencer workflow and AI-assisted reporting | [Case study](projects/marketing-platform.md) |
 | **AI Infrastructure Control Plane & Security Operations** | Self-hosted control plane + deterministic AIOps/security watcher + H200/model observability + tool-calling Qwen incident assistant | [Case study](projects/infra-monitoring-agent.md) |
@@ -81,6 +83,56 @@ engineering governance, working with the delivery team rather than claiming all 
 individual authorship.
 
 → **[Full Chaban product / architecture case study](projects/chaban.md)**
+
+---
+
+## Beverage Operations & Supply Planning + Action Agent
+
+A private operational planning system for a consumer beverage business, combining master data,
+supply/stock workflows, planning scenarios and an embedded **self-hosted Qwen action agent**.
+
+The agent is not a generic chatbot. It exposes **11 explicit tools** for two separate classes of work:
+
+- **bounded planning mutations** — automatic/manual supply mode, quantity overrides, actual-stock
+  overrides, reset operations and primary-plan selection;
+- **structured UI actions** — show/hide metrics, collapse/expand groups, scroll to a domain entity /
+  SKU / period and switch planning scenarios.
+
+Names, SKUs, periods and metrics are resolved into canonical domain identifiers before an action is
+executed. Ambiguous matches return an error instead of silently choosing one. User identity is
+injected by the application boundary rather than trusted from model-generated tool arguments.
+
+The key pattern is:
+
+`free-form intent → explicit domain tool → deterministic application action`
+
+→ **[Full sanitized operations + action-agent case study](projects/operations-supply-planning-agent.md)**
+
+---
+
+## Internal Developer Platform & Release Orchestration
+
+A private **delivery control plane** built around the real multi-environment release workflow rather
+than around a generic CI dashboard.
+
+It joins repository and runtime state into one operator surface:
+
+- branch / commit / ahead-behind / working-tree inspection;
+- file and branch diff, commit history and comparison;
+- commit, pull, push and merge workflows;
+- preview → staging → production promotion;
+- **selective cherry-pick** when a full branch merge is too broad;
+- merge-conflict extraction, resolution and abort paths;
+- Python/Node **dependency preflight against the target runtime**;
+- frontend build, cache handling, PM2 restart, health and logs;
+- self-hosted Qwen assistance for human-readable commit-message suggestions.
+
+The release flow is treated as a state machine with visible failure states instead of a single opaque
+“Deploy” button:
+
+`inspect → diff → commit → promote → preflight → build → restart → verify`
+
+→ **[Full internal developer platform / release-engineering case study](projects/developer-delivery-control-plane.md)**
 
 ---
 
@@ -258,6 +310,10 @@ campaign analytics used as part of the broader marketing platform.
   production ownership and technical governance.
 - **Applied AI:** multimodal retrieval, computer vision, OCR/VLM, vector search, LLM agents,
   tool calling, multi-agent orchestration, self-hosted inference and real-time voice.
+- **Agentic business systems:** bounded domain tools, server-owned identity context, structured UI
+  actions and operational agents embedded directly into business workflows.
+- **Developer platform / release engineering:** repository-state modeling, selective promotion,
+  dependency preflight, conflict handling, build/restart orchestration and recovery workflows.
 - **AI infrastructure / operations:** control-plane design, GPU/model observability, deterministic
   detectors, security telemetry, incident response and AI-aware degradation monitoring.
 - **Evaluation:** golden sets, grouped/cross-store validation, recall@K, FPR-anchored precision,
@@ -274,7 +330,7 @@ campaign analytics used as part of the broader marketing platform.
 **AI / ML:** PyTorch · GroundingDINO · DINOv2 · ArcFace · Qwen2.5-VL · Qwen3-Embedding · vLLM · Qdrant · Prophet · Whisper  
 **Backend / Data:** Python · FastAPI · PostgreSQL · Redis · MinIO · REST · SOAP / 1C  
 **Frontend / Mobile:** TypeScript · Next.js · React · PWA · Dexie/IndexedDB · Kotlin · Jetpack Compose · Room · WorkManager  
-**Realtime / Infra:** Socket.IO · WebRTC · agent registry / command queues · Docker · nginx · PM2/systemd · NVIDIA H200 · Prometheus/Grafana · security telemetry · AIOps  
+**Realtime / Infra:** Socket.IO · WebRTC · agent registry / command queues · Git release orchestration · PM2/systemd · Docker · nginx · NVIDIA H200 · Prometheus/Grafana · security telemetry · AIOps  
 **Marketing / Growth:** Instagram Business / Graph API · Google Search Console · Yandex Metrika · Apify · generative video
 
 ---
