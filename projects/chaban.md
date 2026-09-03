@@ -114,27 +114,146 @@ role/team scoping:
 The platform can also generate management PPTX reports. Dashboard query results are cached in Redis
 for 180 seconds; supervisors are scoped to their own teams.
 
-## Forecasting & Planning
+## Forecasting & Planning Engineering
 
-A daily **Prophet-based demand forecast** runs by SKU with holiday, promotion and weather inputs,
-then allocates forecast quantities down to customers and feeds planning / customer recommendations.
-A separate "today's norm" calculation tells reps what volume is needed to hit monthly targets.
+Forecasting is a separate **versioned data pipeline**, not a single Prophet notebook.
 
-This feature is intentionally not oversold: measured forecast quality is currently weak
-(**WAPE ~57% in the audited evaluation**) and is treated as an area for improvement rather than a
-success metric. Procurement and production planning are not part of the production platform.
+The scheduled path starts from daily order history and produces a demand forecast per active SKU.
+The current baseline model is **Prophet**, but the surrounding engineering is at least as important as
+the model itself.
 
-## Merchandising AI
+### Forecast inputs & model safeguards
 
-The merchandising module is a separate native Android workflow integrated into the same business
-platform:
+The pipeline combines:
 
-**Kotlin / Compose terminal (Room + WorkManager, offline capture)**
-→ ingest API (JWT, SHA-256 dedup, MinIO)
+- daily SKU order history over a configurable training window;
+- regional holidays;
+- SKU-level promotions / lift factors;
+- weather regressors where forecast data is available;
+- active-SKU filtering so dead catalog items do not consume the run.
+
+Before fitting, extreme demand spikes can be capped with an IQR-based rule. For shorter histories the
+model can disable yearly seasonality and tighten trend flexibility rather than extrapolating a weak
+long-term pattern. Forecast outputs are clipped at zero before publication.
+
+### Versioned runs
+
+Forecast executions have explicit run metadata rather than silently overwriting yesterday's result:
+
+`run_id + run_date + version + run_type + status`
+
+The run record can also keep execution statistics such as SKU count, record count, date range and
+runtime. This makes a forecast reproducible enough to compare versions and diagnose a bad run instead
+of treating “the forecast” as one mutable table.
+
+### Walk-forward backtesting
+
+A dedicated **as-of / walk-forward backtest** replays historical forecast dates without modifying the
+live forecast tables.
+
+Evaluation includes:
+
+- **WAPE**;
+- **sMAPE**;
+- total forecast-vs-fact delta;
+- category-level error breakdown;
+- over-forecast analysis and candidate category caps.
+
+Using as-of dates is important because customer/SKU profiles and input data must be computed from the
+information that would actually have been available at that historical point rather than leaking
+future state into evaluation.
+
+### Top-down customer allocation
+
+The SKU-level forecast can be allocated down to customers using recent demand profiles instead of
+training a separate unstable model for every customer × SKU combination.
+
+The allocation layer includes recency-aware weighting and batch-size heuristics with fallback levels
+such as customer/category and SKU-wide history. The same code path understands simulation/as-of runs
+so backtests do not accidentally use today's customer behavior.
+
+### Simulation, adjustment & operations
+
+The repository also contains explicit simulation/versioning and adjustment stages around the base
+forecast, plus scheduled execution and alerting. This allows changes to forecast rules to be tested as
+pipeline changes rather than immediately replacing the published output.
+
+A simplified engineering flow is:
+
+```mermaid
+flowchart LR
+    A[Orders history] --> B[Feature / input preparation]
+    C[Holidays / promotions / weather] --> B
+    B --> D[Prophet per active SKU]
+    D --> E[Base forecast]
+    E --> F[Adjustment / caps]
+    F --> G[Versioned forecast run]
+    G --> H[Top-down customer allocation]
+    H --> I[Planning / recommendations]
+
+    G --> J[Walk-forward backtest]
+    J --> K[WAPE / sMAPE / category error]
+    K --> L[Parameter / rule iteration]
+```
+
+### Current measured quality
+
+This feature is intentionally not oversold. The audited forecast currently has **WAPE ~57%**, which
+is weak for a decision-support forecast and remains an improvement area rather than a headline result.
+
+The value of the current implementation is therefore twofold:
+
+1. it provides a live planning signal and customer-level allocation path;
+2. it provides the **versioning, backtesting and error-analysis machinery** needed to improve that
+   signal without evaluating changes on anecdotal examples.
+
+Procurement and production planning are not part of the Chaban2 production product; the forecast is
+used for commercial planning / recommendations rather than being presented as an autonomous supply
+planning system.
+
+## Merchandising AI — Field Capture to Shelf Intelligence
+
+The merchandising subsystem combines a **native offline-first Android field product** with the
+production retrieval / computer-vision pipeline.
+
+The field-to-AI path is:
+
+```text
+Kotlin / Jetpack Compose terminal
+→ Room-backed durable photo queue
+→ network-aware WorkManager synchronization
+→ ingest API (JWT, SHA-256 dedup, object storage)
 → analysis queue
-→ GPU pipeline
-→ annotation / metrics store
-→ office control center.
+→ GPU detection / OCR / retrieval / fusion
+→ annotation + metrics store
+→ office control center
+```
+
+### Offline field terminal
+
+The Android terminal is more than a camera wrapper. It supports:
+
+- shelf/display selection and capture directly from the relevant card;
+- **analysis vs. planogram** capture modes;
+- Room persistence for queued photos and their shelf/business context;
+- a unified queue with retry/delete and bulk send;
+- immediate retry when connectivity returns plus periodic WorkManager fallback;
+- recovery of uploads left stuck in an in-flight state after process/device interruption;
+- locally cached shelf/display registry for offline fallback;
+- disk-cached/pre-warmed cover images;
+- explicit guards around mutations that require live server state.
+
+For planogram work, the mobile UI can also create/edit **shelf zones directly on the image** using
+interactive drawing, dragging and resize handles. This puts structured correction close to the person
+standing in front of the real shelf.
+
+The key architecture decision is that **field capture is decoupled from GPU inference**. Weak store
+connectivity or a temporarily busy model server does not prevent the merchandiser from taking the next
+photo.
+
+→ **[Offline Merchandising Terminal — field capture deep dive](merch-terminal.md)**
+
+### Recognition pipeline
 
 The recognition stack combines:
 
@@ -159,17 +278,18 @@ The office control center exposes share of shelf, assortment presence, competito
 analysis, review/unknown inbox and catalog management. The engineering pipeline is production;
 market coverage remains pilot-scale.
 
-→ [Detailed retrieval & CV case study](shelf-detection.md)
+→ **[Authoritative Retail Shelf Detection technical case study](https://github.com/swd07/retail-shelf-detection)**
 
 ## AI Agents & Operations
 
 The platform includes self-hosted, tool-calling agents rather than unconstrained chatbots:
 
-- **Director agent** — SQL tools over sales, plans, receivables, returns and merchandising data;
+- **Director agent** — tools over sales, plans, receivables, returns, portfolio/project context and
+  merchandising data;
 - **KPI agent** — server-scoped access to individual KPI data with numeric output validation and
   deterministic fallback;
-- **Security / infrastructure bot** — 31 read-only operational tools plus minute-level monitoring
-  and alerts into the corporate chat;
+- **Security / infrastructure bot** — 20+ read/diagnostic operational tools plus minute-level
+  monitoring and alerts into corporate chat;
 - **Dashboard assistant** — answers from the selected dashboard context rather than unrestricted DB access.
 
 The agent infrastructure is production, but current business adoption is low; it should not be
@@ -218,6 +338,7 @@ The strongest measurable effect is **workflow adoption**, not claimed sales upli
 - No claim for hours/FTE/cost saved because there is no reliable before/after baseline.
 - No claim that internal chat replaced WhatsApp/phone workflows; human chat usage is limited.
 - No claim that AI agents are used by leadership every day; current usage is low.
+- No claim that forecast accuracy is strong; the current audited WAPE is explicitly reported above.
 
 ## Architecture
 
@@ -247,7 +368,8 @@ H200 self-hosted inference
 **Technical Owner / platform architect / Architecture Review Board chair.** I owned the platform
 architecture and production contour, ran architecture/governance decisions, operated the production
 hosts/backups/secrets, and remained hands-on in key engineering areas including merchandising CV
-guardrails/evaluation, security monitoring, ERP exchange fixes and production handover.
+guardrails/evaluation, security monitoring, ERP exchange fixes, forecasting evaluation and production
+handover.
 
 The core business platform was implemented by a development team under this architecture and delivery
 process. Git identity before July 2026 does not reliably separate individual authorship, so this case
@@ -259,5 +381,5 @@ written line-by-line by one engineer.
 `Python` · `FastAPI` · `SQLAlchemy` · `Next.js` · `React` · `Dexie / IndexedDB` · `Socket.IO` ·
 `PostgreSQL 16` · `PgBouncer` · `Redis` · `Qdrant` · `MinIO` · `Kotlin` · `Jetpack Compose` ·
 `Room` · `WorkManager` · `1C SOAP / JSON integration` · `vLLM` · `Qwen2.5-VL` · `Qwen3.6` ·
-`Qwen3-Embedding` · `GroundingDINO` · `DINOv2` · `ArcFace` · `PyTorch` · `Prophet` · `nginx` ·
-`PM2` · `systemd` · `Docker` · `Prometheus / Grafana`
+`Qwen3-Embedding` · `GroundingDINO` · `DINOv2` · `ArcFace` · `PyTorch` · `Prophet` · `pandas` ·
+`nginx` · `PM2` · `systemd` · `Docker` · `Prometheus / Grafana`
