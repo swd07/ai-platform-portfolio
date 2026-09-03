@@ -57,6 +57,18 @@ The PWA covers the rep's daily route, GPS visit start/end, client card, debt and
 product catalog, prices/discounts/agreements, stock visibility, order entry, cash receipts, returns,
 OOS/shelf-price capture, audits, notes, personal KPI and push reminders.
 
+### Production mobile client
+
+<p align="center">
+  <img src="assets/mobile-field-client.jpg" width="360" alt="Production mobile field-sales client">
+</p>
+
+*Representative production screen from the field-sales client.*
+
+The screen is a real production interface used in day-to-day field work, not a design mockup. It
+exposes routes, clients, sales/orders, cash payments, stock, KPI/motivation, audits, messaging and
+device synchronization on top of the same backend and data platform described below.
+
 It is genuinely **local-first**: a Dexie/IndexedDB store prefetches working reference data and a typed
 transactional outbox handles orders, receipts, returns and visit/GPS events with backoff, dead-letter
 handling, send locks and duplicate controls. **45.8k of 46.5k recorded platform orders were created
