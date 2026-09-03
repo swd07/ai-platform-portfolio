@@ -312,24 +312,6 @@ CSRF, file-isolation and trainer-scope security coverage.
 
 ---
 
-## Additional brand / creative engineering
-
-### BOOMi — Consumer Web & Generative Media
-
-Consumer-brand work spanning a **React Three Fiber / Next.js 3D web experience**, generative-video
-workflow and social publishing integration.
-
-→ [BOOMi case study](projects/boomi.md)
-
-### Social Media Intelligence
-
-Influencer discovery, authenticity filtering, Instagram Business API operations and multi-source
-campaign analytics used as part of the broader marketing platform.
-
-→ [Social Media Intelligence case study](projects/social-media-intelligence.md)
-
----
-
 ## Engineering strengths
 
 - **Product / architecture:** discovery, 0→1 delivery, enterprise integration, offline/mobile/web
