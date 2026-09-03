@@ -22,12 +22,12 @@ projects include systems I built independently end-to-end.
 
 | Project | What it is | Evidence / deep dive |
 |---|---|---|
-| **AI Chaban2** | Commercial operating platform: offline field sales, 1C ERP, KPI, BI, forecasting, merchandising AI and agents | [Portfolio case study](projects/chaban.md) |
+| **AI Chaban2** | Commercial operating platform: offline field sales, 1C ERP, KPI/BI, versioned forecasting/backtesting, merchandising AI and agents | [Portfolio case study](projects/chaban.md) |
 | **Beverage Operations & Supply Planning + Action Agent** | Private operational planning platform with stock/supply workflows and an embedded 11-tool self-hosted Qwen action agent | [Case study](projects/operations-supply-planning-agent.md) |
 | **Internal Developer Platform & Release Orchestration** | Delivery control plane for repository state, selective promotion, conflict handling, dependency preflight, builds and runtime restart/verification | [Case study](projects/developer-delivery-control-plane.md) |
-| **Retail Shelf Detection** | Production retrieval + multimodal recognition with Qdrant, DINOv2/ArcFace, guardrails and abstention | **[Technical case-study repository](https://github.com/swd07/retail-shelf-detection)** |
+| **Retail Shelf Detection** | Offline Android field capture + production multimodal retrieval/recognition with Qdrant, DINOv2/ArcFace, guardrails and abstention | **[Technical case-study repository](https://github.com/swd07/retail-shelf-detection)** |
 | **AI Marketing & Brand Growth Platform** | Multi-source marketing intelligence: Instagram, website traffic, search visibility, content analytics, influencer workflow and AI-assisted reporting | [Case study](projects/marketing-platform.md) |
-| **AI Infrastructure Control Plane & Security Operations** | Self-hosted control plane + deterministic AIOps/security watcher + H200/model observability + tool-calling Qwen incident assistant | [Case study](projects/infra-monitoring-agent.md) |
+| **AI Infrastructure Control Plane & Security Operations** | Self-hosted control plane + deterministic AIOps/security + H200/model observability + Qwen incident assistant + least-privilege MCP access | [Case study](projects/infra-monitoring-agent.md) |
 | **Jarvis — Multi-Agent Orchestrator** | Voice-first executive/ops command center: WebRTC, agent registry + command queue, project intelligence, safe browser actions and delegated work | [Case study](projects/jarvis.md) |
 | **Fitness Marathon Platform** | 0→1 coach/client product with private media, chat, RBAC and full-stack delivery | [Case study](projects/fitness-platform.md) |
 
@@ -68,9 +68,13 @@ offline.**
   orders, receipts and returns with reconciliation.
 - **13 management analytics areas**: sales, plan/fact, service level, receivables aging, returns,
   geographic coverage, client clusters, ABC/XYZ, churn risk, visit coverage and configurable pivot.
-- Daily Prophet-based demand forecasting is live, but current measured accuracy is weak
-  (**WAPE ~57%**), so it is treated as an improvement area rather than a headline result.
-- Merchandising CV and self-hosted LLM/tool-calling services sit on the same platform infrastructure.
+- Demand forecasting is a **versioned pipeline**, with Prophet per active SKU, holiday/promotion/
+  weather inputs, walk-forward backtesting, WAPE/sMAPE analysis and top-down customer allocation.
+  Current audited quality remains weak at **WAPE ~57%**, so it is an improvement area rather than a
+  headline result.
+- Merchandising combines a native **Kotlin/Compose offline terminal** with Room/WorkManager,
+  planogram/shelf-zone workflows and the production CV/retrieval pipeline.
+- Self-hosted LLM/tool-calling services sit on the same platform infrastructure.
 
 **Business impact I can prove:** the platform became the company's primary order-entry channel and
 made field execution measurable. I do **not** attribute the company's sales growth to the platform:
@@ -82,7 +86,8 @@ decisions, production ownership, AI/retrieval/evaluation work, ERP/infrastructur
 engineering governance, working with the delivery team rather than claiming all platform code as
 individual authorship.
 
-→ **[Full Chaban product / architecture case study](projects/chaban.md)**
+→ **[Full Chaban product / architecture case study](projects/chaban.md)**  
+→ [Offline merchandising terminal deep dive](projects/merch-terminal.md)
 
 ---
 
@@ -140,8 +145,13 @@ The release flow is treated as a state machine with visible failure states inste
 
 [![Live shelf pipeline output](assets/shelf-detection-live.jpg)](https://github.com/swd07/retail-shelf-detection)
 
-A production-engineered merchandising pipeline that converts shelf photos into brand/SKU,
-share-of-shelf, assortment and competitor analytics. The system combines:
+A production-engineered merchandising system that starts in the store, not at the GPU. A native
+**Kotlin / Jetpack Compose** terminal persists photo work in **Room**, uses WorkManager for deferred
+sync, retries immediately when connectivity returns, recovers interrupted uploads and supports
+planogram / shelf-zone editing on-device.
+
+The uploaded shelf photos then become brand/SKU, share-of-shelf, assortment and competitor analytics
+through:
 
 `GroundingDINO → Qwen2.5-VL OCR → Qwen3-Embedding → Qdrant retrieval → DINOv2 / ArcFace → deterministic fusion → guardrails → SKU / brand / unknown`
 
@@ -157,10 +167,11 @@ system abstains when confidence is insufficient.
 - **6k+ shelf photos** processed; current rollout is a **pilot across 40 outlets / 3 merch users**.
 - Golden sets, cross-store validation, recall@K, FPR-anchored precision, pre-registered kill gates,
   a **47k-box replay harness**, and `off → shadow → active` rollout.
+- Field capture is decoupled from inference through a durable offline queue, so weak connectivity or
+  a busy GPU service does not block the merchandiser's next photo.
 
-This portfolio intentionally does **not** duplicate the full technical write-up.
-
-→ **[Open the authoritative technical case study + runnable examples](https://github.com/swd07/retail-shelf-detection)**
+→ **[Open the authoritative technical case study + runnable examples](https://github.com/swd07/retail-shelf-detection)**  
+→ [Offline Android merchandising terminal deep dive](projects/merch-terminal.md)
 
 ---
 
@@ -215,8 +226,8 @@ Search Console reporting for clicks, impressions, CTR, average position and bran
 
 A private production **control plane + autonomous AIOps/security layer** for a mixed application and
 self-hosted AI environment. The system combines a Next.js operations console, deterministic detectors,
-security telemetry, H200/model observability, mobile incident delivery and a tool-calling Qwen
-assistant for investigation.
+security telemetry, H200/model observability, mobile incident delivery, a tool-calling Qwen assistant
+and a separate **least-privilege MCP gateway** for trusted local AI/IDE clients.
 
 **Operational coverage**
 
@@ -232,6 +243,9 @@ assistant for investigation.
 - NVIDIA **H200** monitoring for VRAM, utilization, temperature, power and active GPU processes.
 - **20+ tool** self-hosted Qwen incident assistant that queries real operational data instead of
   inventing system state.
+- A separate **7-tool MCP surface** uses PostgreSQL read-only permissions, explicit whitelist,
+  input bounds, a default 24 KB output cap, stdio transport and JSONL audit; the wrapper has
+  **19 focused security tests**.
 
 Two AI-specific detectors are especially important: **LLM endpoint drift** catches live model
 endpoints that no longer match configured inventory after migrations, while **silent OCR degradation**
@@ -306,8 +320,8 @@ campaign analytics used as part of the broader marketing platform.
 
 ## Engineering strengths
 
-- **Product / architecture:** discovery, 0→1 delivery, enterprise integration, mobile/web workflows,
-  production ownership and technical governance.
+- **Product / architecture:** discovery, 0→1 delivery, enterprise integration, offline/mobile/web
+  workflows, production ownership and technical governance.
 - **Applied AI:** multimodal retrieval, computer vision, OCR/VLM, vector search, LLM agents,
   tool calling, multi-agent orchestration, self-hosted inference and real-time voice.
 - **Agentic business systems:** bounded domain tools, server-owned identity context, structured UI
@@ -315,9 +329,11 @@ campaign analytics used as part of the broader marketing platform.
 - **Developer platform / release engineering:** repository-state modeling, selective promotion,
   dependency preflight, conflict handling, build/restart orchestration and recovery workflows.
 - **AI infrastructure / operations:** control-plane design, GPU/model observability, deterministic
-  detectors, security telemetry, incident response and AI-aware degradation monitoring.
+  detectors, security telemetry, incident response, **least-privilege MCP access** and AI-aware
+  degradation monitoring.
 - **Evaluation:** golden sets, grouped/cross-store validation, recall@K, FPR-anchored precision,
-  replay testing, pre-registered acceptance/kill thresholds and explicit abstention.
+  replay testing, walk-forward forecast backtesting, WAPE/sMAPE, pre-registered acceptance/kill
+  thresholds and explicit abstention.
 - **Safe rollout:** `off → shadow → active`, observability, health checks, rollback and incident
   monitoring.
 - **Data / integration:** PostgreSQL, Qdrant, Redis, MinIO/S3-compatible storage, 1C SOAP/JSON,
@@ -330,7 +346,7 @@ campaign analytics used as part of the broader marketing platform.
 **AI / ML:** PyTorch · GroundingDINO · DINOv2 · ArcFace · Qwen2.5-VL · Qwen3-Embedding · vLLM · Qdrant · Prophet · Whisper  
 **Backend / Data:** Python · FastAPI · PostgreSQL · Redis · MinIO · REST · SOAP / 1C  
 **Frontend / Mobile:** TypeScript · Next.js · React · PWA · Dexie/IndexedDB · Kotlin · Jetpack Compose · Room · WorkManager  
-**Realtime / Infra:** Socket.IO · WebRTC · agent registry / command queues · Git release orchestration · PM2/systemd · Docker · nginx · NVIDIA H200 · Prometheus/Grafana · security telemetry · AIOps  
+**Realtime / Infra:** Socket.IO · WebRTC · MCP · agent registry / command queues · Git release orchestration · PM2/systemd · Docker · nginx · NVIDIA H200 · Prometheus/Grafana · security telemetry · AIOps  
 **Marketing / Growth:** Instagram Business / Graph API · Google Search Console · Yandex Metrika · Apify · generative video
 
 ---
