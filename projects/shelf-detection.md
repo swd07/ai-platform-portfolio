@@ -39,6 +39,7 @@ The LLM reads text/package evidence but **does not make the final SKU decision**
 
 - **Brand precision: 95.8%**
 - **SKU precision: 73.1% end-to-end**
+- **Detector F1: 0.68 → 0.91** on unseen shelf photos
 - **1,345 entries** in the production vector-retrieval catalog
 - **~320k OCR calls**
 - **~108k ArcFace shadow evaluations**
@@ -53,8 +54,8 @@ FPR-anchored precision, Wilson intervals, pre-registered acceptance / kill thres
 
 I own the technical architecture and production rollout of this AI subsystem and have been
 hands-on in retrieval/matching, OCR/VLM and embedding services, multimodal fusion, guardrails,
-evaluation methodology and production infrastructure. The broader Chaban platform is delivered
-with an engineering team under my Technical Owner / platform-architect role.
+evaluation methodology and production infrastructure. The broader Chaban platform was extended
+by the team of 7 engineers I hired and led as Head of AI.
 
 ## Go deeper
 

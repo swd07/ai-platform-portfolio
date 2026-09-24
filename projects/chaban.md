@@ -1,6 +1,6 @@
 # AI Chaban2 — Commercial Operating Platform for Field Sales & Distribution
 
-> A production field-sales and commercial-operations platform for a dairy producer: offline mobile workflows for sales reps, bidirectional 1C ERP integration, KPI and motivation, management BI, forecasting, merchandising computer vision, and self-hosted AI services.
+> A production field-sales and commercial-operations platform for the distribution subsidiary of a dairy producer: offline mobile workflows for sales reps, bidirectional 1C ERP integration, KPI and motivation, management BI, forecasting, merchandising computer vision, and self-hosted AI services.
 
 ![Chaban platform architecture](../assets/chaban-architecture.png)
 
@@ -271,6 +271,7 @@ Audited results:
 
 - **95.8% brand precision**;
 - **73.1% SKU precision** end-to-end;
+- **detector F1 0.68 → 0.91** on unseen shelf photos;
 - **6k+ photos** processed;
 - pilot scope of **40 outlets / 3 merchandising users**.
 
@@ -290,7 +291,12 @@ The platform includes self-hosted, tool-calling agents rather than unconstrained
   deterministic fallback;
 - **Security / infrastructure bot** — 20+ read/diagnostic operational tools plus minute-level
   monitoring and alerts into corporate chat;
-- **Dashboard assistant** — answers from the selected dashboard context rather than unrestricted DB access.
+- **Dashboard assistant** — answers from the selected dashboard context rather than unrestricted DB access;
+- **Planning action agent** — 11 bounded planning / UI tools on the company's separate supply-planning
+  platform ([case study](operations-supply-planning-agent.md)).
+
+Agent orchestration is a custom stateful implementation with conditional routing rather than an agent
+framework, and production LLM calls are traced in **Langfuse**.
 
 The agent infrastructure is production, but current business adoption is low; it should not be
 represented as a heavily used daily workflow.
@@ -365,21 +371,21 @@ H200 self-hosted inference
 
 ## My Role
 
-**Technical Owner / platform architect / Architecture Review Board chair.** I owned the platform
-architecture and production contour, ran architecture/governance decisions, operated the production
-hosts/backups/secrets, and remained hands-on in key engineering areas including merchandising CV
-guardrails/evaluation, security monitoring, ERP exchange fixes, forecasting evaluation and production
-handover.
+**Head of AI; Technical Owner / platform architect / Architecture Review Board chair.**
 
-The core business platform was implemented by a development team under this architecture and delivery
-process. Git identity before July 2026 does not reliably separate individual authorship, so this case
-study deliberately describes the platform as **architected and technically owned**, not personally
-written line-by-line by one engineer.
+I built the first production versions of the platform hands-on, then hired and led a team of
+**7 engineers** who extended it. I kept ownership of the platform architecture and production
+contour, ran architecture/governance decisions, operated the production hosts/backups/secrets, and
+remained hands-on in key engineering areas including merchandising CV guardrails/evaluation,
+security monitoring, ERP exchange fixes, forecasting evaluation and production handover.
+
+The platform today is a team system: this case study describes the foundation I built and the work of
+the team I led, not every later line of code as individual authorship.
 
 ## Tech Stack
 
 `Python` · `FastAPI` · `SQLAlchemy` · `Next.js` · `React` · `Dexie / IndexedDB` · `Socket.IO` ·
 `PostgreSQL 16` · `PgBouncer` · `Redis` · `Qdrant` · `MinIO` · `Kotlin` · `Jetpack Compose` ·
 `Room` · `WorkManager` · `1C SOAP / JSON integration` · `vLLM` · `Qwen2.5-VL` · `Qwen3.6` ·
-`Qwen3-Embedding` · `GroundingDINO` · `DINOv2` · `ArcFace` · `PyTorch` · `Prophet` · `pandas` ·
+`Qwen3-Embedding` · `Langfuse` · `GroundingDINO` · `DINOv2` · `ArcFace` · `PyTorch` · `Prophet` · `pandas` ·
 `nginx` · `PM2` · `systemd` · `Docker` · `Prometheus / Grafana`

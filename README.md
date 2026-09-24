@@ -8,9 +8,11 @@ My strongest work sits at the intersection of **Applied AI, product engineering 
 architecture**: taking an operational problem, turning it into a system people actually use, and
 measuring what works instead of stopping at a demo.
 
-For the main commercial platform below I serve as **Technical Owner / platform architect** and
-remain hands-on in architecture, AI, evaluation, integrations and production operations. Other
-projects include systems I built independently end-to-end.
+At a dairy FMCG group (the manufacturer and its distribution subsidiary) I was **Head of AI** and
+Technical Owner of the main commercial platform below. I built the first production systems
+hands-on, then hired and led a team of **7 engineers** who extended them, while I stayed hands-on in
+architecture, AI, evaluation, integrations and production operations. Other projects include systems
+I built independently end-to-end.
 
 > Most production code is private because it contains proprietary data, integrations and
 > infrastructure details. This repository contains sanitized case studies, architecture,
@@ -23,7 +25,7 @@ projects include systems I built independently end-to-end.
 | Project | What it is | Evidence / deep dive |
 |---|---|---|
 | **AI Chaban2** | Commercial operating platform: offline field sales, 1C ERP, KPI/BI, versioned forecasting/backtesting, merchandising AI and agents | [Portfolio case study](projects/chaban.md) |
-| **Beverage Operations & Supply Planning + Action Agent** | Private operational planning platform with stock/supply workflows and an embedded 11-tool self-hosted Qwen action agent | [Case study](projects/operations-supply-planning-agent.md) |
+| **Operations & Supply Planning + Action Agent** | Planning platform for the group's distribution company with stock/supply workflows and an embedded 11-tool self-hosted Qwen action agent (custom stateful orchestration) | [Case study](projects/operations-supply-planning-agent.md) |
 | **Internal Developer Platform & Release Orchestration** | Delivery control plane for repository state, selective promotion, conflict handling, dependency preflight, builds and runtime restart/verification | [Case study](projects/developer-delivery-control-plane.md) |
 | **Retail Shelf Detection** | Offline Android field capture + production multimodal retrieval/recognition with Qdrant, DINOv2/ArcFace, guardrails and abstention | **[Technical case-study repository](https://github.com/swd07/retail-shelf-detection)** |
 | **AI Marketing & Brand Growth Platform** | Multi-source marketing intelligence: Instagram, website traffic, search visibility, content analytics, influencer workflow and AI-assisted reporting | [Case study](projects/marketing-platform.md) |
@@ -37,7 +39,7 @@ projects include systems I built independently end-to-end.
 
 ![Chaban platform architecture](assets/chaban-architecture.png)
 
-A production **field-sales and commercial-operations platform** for an FMCG manufacturer. Its core
+A production **field-sales and commercial-operations platform** for the distribution subsidiary of a dairy FMCG manufacturer. Its core
 is an offline-first working application for field sales reps, integrated bidirectionally with 1C ERP.
 On top of the transactional layer sit KPI/motivation, management BI, forecasting, merchandising CV,
 self-hosted AI services and operational agents.
@@ -93,19 +95,18 @@ made field execution measurable. I do **not** attribute the company's sales grow
 the growth trend started before platform adoption, and there is no clean baseline for hours/FTE cost
 savings.
 
-**My role:** Technical Owner / platform architect and ARB chair; architecture and major technology
-decisions, production ownership, AI/retrieval/evaluation work, ERP/infrastructure decisions and
-engineering governance, working with the delivery team rather than claiming all platform code as
-individual authorship.
+**My role:** Head of AI and Technical Owner / platform architect (ARB chair). I built the first production versions hands-on, then hired and led a team of **7 engineers** who
+extended the platform, while I kept ownership of architecture, major technology decisions,
+AI/retrieval/evaluation work, ERP/infrastructure decisions and production operations.
 
 → **[Full Chaban product / architecture case study](projects/chaban.md)**  
 → [Offline merchandising terminal deep dive](projects/merch-terminal.md)
 
 ---
 
-## Beverage Operations & Supply Planning + Action Agent
+## Operations & Supply Planning + Action Agent
 
-A private operational planning system for a consumer beverage business, combining master data,
+A private operational planning system for the group's distribution company (Chaban), combining master data,
 supply/stock workflows, planning scenarios and an embedded **self-hosted Qwen action agent**.
 
 The agent is not a generic chatbot. It exposes **11 explicit tools** for two separate classes of work:
@@ -118,6 +119,9 @@ The agent is not a generic chatbot. It exposes **11 explicit tools** for two sep
 Names, SKUs, periods and metrics are resolved into canonical domain identifiers before an action is
 executed. Ambiguous matches return an error instead of silently choosing one. User identity is
 injected by the application boundary rather than trusted from model-generated tool arguments.
+
+Orchestration is a **custom stateful loop with conditional routing** and bounded tool rounds rather
+than an agent framework; production LLM calls are traced in **Langfuse**.
 
 The key pattern is:
 
@@ -173,6 +177,7 @@ system abstains when confidence is insufficient.
 **Key evidence**
 
 - **95.8% brand precision / 73.1% SKU precision** on confirmed end-to-end evaluation.
+- **Detector F1 improved from 0.68 to 0.91** on unseen shelf photos.
 - **1,345 entries** in the production vector-retrieval catalog; broader merchandising catalog has
   ~1.5k own + competitor SKUs.
 - **~320k OCR calls** and **~108k ArcFace shadow evaluations** processed.
@@ -317,7 +322,8 @@ CSRF, file-isolation and trainer-scope security coverage.
 - **Product / architecture:** discovery, 0→1 delivery, enterprise integration, offline/mobile/web
   workflows, production ownership and technical governance.
 - **Applied AI:** multimodal retrieval, computer vision, OCR/VLM, vector search, LLM agents,
-  tool calling, multi-agent orchestration, self-hosted inference and real-time voice.
+  tool calling, custom stateful agent orchestration, multi-agent workflows, self-hosted inference and
+  real-time voice.
 - **Agentic business systems:** bounded domain tools, server-owned identity context, structured UI
   actions and operational agents embedded directly into business workflows.
 - **Developer platform / release engineering:** repository-state modeling, selective promotion,
@@ -328,8 +334,8 @@ CSRF, file-isolation and trainer-scope security coverage.
 - **Evaluation:** golden sets, grouped/cross-store validation, recall@K, FPR-anchored precision,
   replay testing, walk-forward forecast backtesting, WAPE/sMAPE, pre-registered acceptance/kill
   thresholds and explicit abstention.
-- **Safe rollout:** `off → shadow → active`, observability, health checks, rollback and incident
-  monitoring.
+- **Safe rollout:** `off → shadow → active`, observability, LLM tracing (Langfuse), health checks,
+  rollback and incident monitoring.
 - **Data / integration:** PostgreSQL, Qdrant, Redis, MinIO/S3-compatible storage, 1C SOAP/JSON,
   Instagram Business API, Yandex Metrika and Google Search Console.
 - **Growth / content systems:** multi-source marketing analytics, content-performance intelligence,
@@ -337,7 +343,7 @@ CSRF, file-isolation and trainer-scope security coverage.
 
 ## Tech stack
 
-**AI / ML:** PyTorch · GroundingDINO · DINOv2 · ArcFace · Qwen2.5-VL · Qwen3-Embedding · vLLM · Qdrant · Prophet · Whisper  
+**AI / ML:** PyTorch · GroundingDINO · DINOv2 · ArcFace · Qwen2.5-VL · Qwen3-Embedding · vLLM · Qdrant · Langfuse · Prophet · Whisper  
 **Backend / Data:** Python · FastAPI · PostgreSQL · Redis · MinIO · REST · SOAP / 1C  
 **Frontend / Mobile:** TypeScript · Next.js · React · PWA · Dexie/IndexedDB · Kotlin · Jetpack Compose · Room · WorkManager  
 **Realtime / Infra:** Socket.IO · WebRTC · MCP · agent registry / command queues · Git release orchestration · PM2/systemd · Docker · nginx · NVIDIA H200 · Prometheus/Grafana · security telemetry · AIOps  

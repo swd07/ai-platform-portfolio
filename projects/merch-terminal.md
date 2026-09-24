@@ -146,7 +146,7 @@ Planogram/shelf-zone editing on the device allows structured shelf geometry to b
 
 ## My role
 
-As Technical Owner / platform architect for the broader commercial platform, I owned the merchandising-system architecture and production rollout. The Android terminal is part of that end-to-end system and was developed within the delivery team under the platform architecture; this case describes the product and engineering decisions I can substantiate rather than claiming every line of mobile implementation as individual authorship.
+As Head of AI and Technical Owner / platform architect for the broader commercial platform, I owned the merchandising-system architecture and production rollout. The Android terminal is part of that end-to-end system and was developed by the engineering team I led, under the platform architecture; this case describes the product and engineering decisions I can substantiate rather than claiming every line of mobile implementation as individual authorship.
 
 ## Stack
 

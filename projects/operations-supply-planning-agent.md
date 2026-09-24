@@ -1,16 +1,17 @@
-# Beverage Operations & Supply Planning Platform + Action Agent
+# Operations & Supply Planning Platform + Action Agent
 
-> A private operational planning platform for a consumer beverage business — combining master data,
+> A private operational planning platform for Chaban, the distribution subsidiary of a dairy FMCG
+> manufacturer — combining master data,
 > supply planning, stock visibility, demand context, distribution workflows and an embedded
 > self-hosted AI agent that can both navigate the interface and execute bounded planning actions.
 
-> **Public case-study note:** the client/brand name, production hostnames, internal network addresses,
+> **Public case-study note:** production hostnames, internal network addresses,
 > user identities and company-specific commercial data are intentionally omitted. Production code
 > remains private.
 
 ## Problem
 
-Planning a beverage operation requires more than a static BI dashboard. Commercial and operations
+Planning a distribution operation requires more than a static BI dashboard. Commercial and operations
 teams need to work across product master data, trade/distribution entities, stock, demand forecasts,
 production/supply plans and alternative planning scenarios.
 
@@ -28,7 +29,7 @@ unrestricted administrator.
 
 ## Operational platform
 
-The broader private platform provides an operating layer around the beverage business, including:
+The broader private platform provides an operating layer around the distribution business, including:
 
 - executive operational summary;
 - product and operational master data;
@@ -50,6 +51,9 @@ registry of tools and returns both natural-language output and structured UI act
 A typical loop is:
 
 `user intent → Qwen tool call → validated tool handler → planning API / UI action → tool result → final answer`
+
+Orchestration is a **custom stateful implementation with conditional routing** rather than an agent
+framework, and production LLM calls are traced in **Langfuse**.
 
 The server limits tool execution to a bounded number of rounds and falls back to a normal answer when
 no further action is required.
@@ -220,11 +224,11 @@ injection, anti-hallucination rules, process/runtime behavior and integration wi
 operations product.
 
 The surrounding platform is a private commercial system; this case intentionally describes its
-architecture and workflows without exposing client identity or proprietary commercial data.
+architecture and workflows without exposing proprietary commercial data.
 
 ## Stack
 
-`Python` · `FastAPI` · `Pydantic` · `self-hosted Qwen` · `OpenAI-compatible inference` · `REST`  
+`Python` · `FastAPI` · `Pydantic` · `self-hosted Qwen` · `OpenAI-compatible inference` · `Langfuse` · `REST`  
 `Next.js / React operational UI` · `PM2` · `Linux` · `tool calling` · `structured UI actions`
 
 ## Engineering principles demonstrated
