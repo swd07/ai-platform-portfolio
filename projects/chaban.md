@@ -279,8 +279,9 @@ Recognition results feed a merchandising dashboard: share of shelf by brand and 
 stores flagged), presence of own SKUs across stores, price intelligence from price tags (price index
 vs the market, competitor comparison by category) and store markup vs base price. Unknown crops go
 to a review inbox, and confirmed crops extend the visual gallery. Shelf zones are captured in the
-field app; automatic planogram-compliance checking is on the roadmap. The engineering pipeline is
-production; market coverage remains pilot-scale.
+field app, and a drift-based compliance check compares each store visit with that store's own
+history (own-share drop, missing anchor products). The engineering pipeline is production; market
+coverage remains pilot-scale.
 
 → **[Authoritative Retail Shelf Detection technical case study](https://github.com/swd07/retail-shelf-detection)**
 
