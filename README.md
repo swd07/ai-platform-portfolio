@@ -178,6 +178,8 @@ system abstains when confidence is insufficient.
 
 - **95.8% brand precision / 73.1% SKU precision** on confirmed end-to-end evaluation.
 - **Detector F1 improved from 0.68 to 0.91** on unseen shelf photos.
+- **Business outputs:** share of shelf, SKU presence, price index vs competitors and store markup
+  from price tags.
 - **1,345 entries** in the production vector-retrieval catalog; broader merchandising catalog has
   ~1.5k own + competitor SKUs.
 - **~320k OCR calls** and **~108k ArcFace shadow evaluations** processed.

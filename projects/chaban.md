@@ -275,9 +275,12 @@ Audited results:
 - **6k+ photos** processed;
 - pilot scope of **40 outlets / 3 merchandising users**.
 
-The office control center exposes share of shelf, assortment presence, competitors, price-tag
-analysis, review/unknown inbox and catalog management. The engineering pipeline is production;
-market coverage remains pilot-scale.
+Recognition results feed a merchandising dashboard: share of shelf by brand and store (low-share
+stores flagged), presence of own SKUs across stores, price intelligence from price tags (price index
+vs the market, competitor comparison by category) and store markup vs base price. Unknown crops go
+to a review inbox, and confirmed crops extend the visual gallery. Shelf zones are captured in the
+field app; automatic planogram-compliance checking is on the roadmap. The engineering pipeline is
+production; market coverage remains pilot-scale.
 
 → **[Authoritative Retail Shelf Detection technical case study](https://github.com/swd07/retail-shelf-detection)**
 
