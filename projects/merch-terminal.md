@@ -1,5 +1,7 @@
 # Offline Merchandising Terminal — Field Capture for Shelf Intelligence
 
+📖 Full case study: https://swd07.github.io/projects/merch-terminal/
+
 > A private native Android field application that turns in-store shelf work into a durable offline-first capture workflow for the production merchandising AI pipeline.
 
 > **Public case-study note:** production repositories, internal endpoints, store/user identifiers and company-specific deployment details are intentionally omitted. The implementation remains private.

@@ -1,5 +1,7 @@
 # Operations & Supply Planning Platform + Action Agent
 
+📖 Full case study: https://swd07.github.io/projects/operations-agent/
+
 > A private operational planning platform for Chaban, the distribution subsidiary of a dairy FMCG
 > manufacturer — combining master data,
 > supply planning, stock visibility, demand context, distribution workflows and an embedded

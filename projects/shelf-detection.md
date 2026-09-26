@@ -1,5 +1,7 @@
 # Shelf Detection — Production Retrieval & Multimodal AI
 
+📖 Full case study: https://swd07.github.io/projects/retail-shelf-detection/
+
 > Portfolio summary. The authoritative technical case study, evaluation notes and runnable examples
 > live in the dedicated repository:
 >

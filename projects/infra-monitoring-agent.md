@@ -1,5 +1,7 @@
 # AI Infrastructure Control Plane & Security Operations
 
+📖 Full case study: https://swd07.github.io/projects/ai-infrastructure/
+
 > A self-hosted operations layer for production AI infrastructure — combining a web control plane,
 > deterministic AIOps/security detectors, AI-model and GPU observability, incident alerting, a
 > tool-calling Qwen assistant, and a least-privilege MCP gateway for safe external AI access.

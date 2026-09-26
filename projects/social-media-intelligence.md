@@ -1,5 +1,7 @@
 # AI-Assisted Social Media Intelligence & Campaign Analytics
 
+📖 Full case study: https://swd07.github.io/projects/marketing-platform/
+
 > A social-media intelligence and campaign analytics workflow for a consumer beverage brand - combining influencer discovery, Instagram Business/Graph API integration, Apify-based data extraction, website analytics, search visibility metrics, and AI-assisted reporting.
 
 ## Problem

@@ -1,5 +1,7 @@
 # AI Chaban2 — Commercial Operating Platform for Field Sales & Distribution
 
+📖 Full case study: https://swd07.github.io/projects/chaban-platform/
+
 > A production field-sales and commercial-operations platform for the distribution subsidiary of a dairy producer: offline mobile workflows for sales reps, bidirectional 1C ERP integration, KPI and motivation, management BI, forecasting, merchandising computer vision, and self-hosted AI services.
 
 ![Chaban platform architecture](../assets/chaban-architecture.png)

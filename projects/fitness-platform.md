@@ -1,5 +1,7 @@
 # Fitness Marathon Platform - Coach/Client Coaching System
 
+📖 Full case study: https://swd07.github.io/projects/fitness-platform/
+
 > A full-stack platform prototype for running women's online fitness marathons: a coach publishes
 > daily meal plans and workout programs, participants submit photo food reports and track
 > progress, and the coach reviews everything from a dedicated cabinet.

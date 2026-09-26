@@ -1,5 +1,7 @@
 # BOOMi - Beverage Brand: 3D Web, Generative Video & Social Integration
 
+📖 Full case study: https://swd07.github.io/projects/marketing-platform/
+
 > A consumer beverage brand's digital presence: an interactive 3D marketing site, a
 > generative-video creative workflow, and a programmatic social-publishing integration.
 

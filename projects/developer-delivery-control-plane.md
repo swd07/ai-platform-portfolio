@@ -1,5 +1,7 @@
 # Internal Developer Platform & Release Orchestration
 
+📖 Full case study: https://swd07.github.io/projects/delivery-control-plane/
+
 > A private delivery control plane for managing multi-environment application releases — combining
 > repository state, diff/commit workflows, preview → staging → production promotion, selective
 > cherry-pick, build/restart orchestration, conflict handling, dependency checks and operational logs.

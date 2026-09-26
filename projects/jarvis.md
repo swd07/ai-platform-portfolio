@@ -1,5 +1,7 @@
 # Jarvis — Voice-First Multi-Agent Orchestrator & Executive Command Center
 
+📖 Full case study: https://swd07.github.io/projects/jarvis/
+
 > A production-oriented voice command center that combines real-time WebRTC conversation,
 > an agent registry and command queue, executive/project intelligence, safe browser actions,
 > and delegated work across specialized AI agents.

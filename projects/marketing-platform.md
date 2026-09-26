@@ -1,5 +1,7 @@
 # AI Marketing & Brand Growth Platform
 
+📖 Full case study: https://swd07.github.io/projects/marketing-platform/
+
 > A multi-source marketing intelligence platform for a consumer beverage brand — combining website traffic, Instagram analytics, search visibility, influencer workflow, campaign reporting and AI-assisted analysis.
 
 ## Problem

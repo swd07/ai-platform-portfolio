@@ -1,5 +1,7 @@
 # Applied AI Engineer / AI Solutions Architect — Portfolio
 
+📖 Full case studies: https://swd07.github.io/
+
 I design and ship **production AI and business systems end-to-end** — from product discovery,
 backend/data architecture and enterprise integrations to retrieval/CV pipelines, self-hosted GPU
 inference, LLM agents, mobile/web interfaces, evaluation and production operations.
