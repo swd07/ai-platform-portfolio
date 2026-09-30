@@ -36,8 +36,7 @@ Above that transactional layer sit:
 - a production computer-vision merchandising pipeline;
 - self-hosted LLM agents and infrastructure monitoring.
 
-By August 2026, **98% of company orders in 1C carried a platform-generated identifier** — about
-**9k orders/month** — making the platform the primary order-entry channel for the commercial team.
+By August 2026, **98% of company orders in 1C carried a platform-generated identifier** — **9–11k orders/month** — making the platform the primary order-entry channel for the commercial team.
 
 ## Users & scale
 
@@ -213,9 +212,9 @@ flowchart LR
     K --> L[Parameter / rule iteration]
 ```
 
-### Current measured quality
+### Measured quality (August 2026)
 
-This feature is intentionally not oversold. The audited forecast currently has **WAPE ~57%**, which
+This feature is intentionally not oversold. The audited forecast had **WAPE ~57%**, which
 is weak for a decision-support forecast and remains an improvement area rather than a headline result.
 
 The value of the current implementation is therefore twofold:
@@ -352,7 +351,7 @@ The strongest measurable effect is **workflow adoption**, not claimed sales upli
 
 - Platform-originated share of company ERP orders grew from effectively zero at the start of 2026
   to **98% by Aug 2026**.
-- The system processed approximately **9k orders/month**, 30k+ cash receipts and ~10k returns.
+- The system processed **9–11k orders/month**, 30k+ cash receipts and ~10k returns.
 - Field execution became measurable through **50k+ GPS-stamped visits**.
 - The platform exposes debt, plans, KPI and management analytics from a shared ERP-backed data model.
 - Self-hosted AI inference removed production dependence on external AI APIs; the exact financial
@@ -365,7 +364,7 @@ The strongest measurable effect is **workflow adoption**, not claimed sales upli
 - No claim for hours/FTE/cost saved because there is no reliable before/after baseline.
 - No claim that internal chat replaced WhatsApp/phone workflows; human chat usage is limited.
 - No claim that AI agents are used by leadership every day; current usage is low.
-- No claim that forecast accuracy is strong; the current audited WAPE is explicitly reported above.
+- No claim that forecast accuracy is strong; the audited WAPE is explicitly reported above.
 
 ## Architecture
 

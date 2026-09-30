@@ -59,7 +59,7 @@ can be explicitly marked so planned work is not treated as an incident.
 A Python watcher runs on a **60-second production loop** and evaluates deterministic detectors before
 anything reaches the LLM layer.
 
-Current detector coverage includes **15+ operational/security alert types** across:
+Detector coverage included **15+ operational/security alert types** across:
 
 **Security**
 - HTTP authentication brute-force patterns;

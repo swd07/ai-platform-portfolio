@@ -46,7 +46,7 @@ The LLM reads text/package evidence but **does not make the final SKU decision**
 - **~320k OCR calls**
 - **~108k ArcFace shadow evaluations**
 - **6k+ shelf photos** processed
-- Current rollout: **pilot across 40 outlets / 3 merch users**
+- Rollout as of August 2026: **pilot across 40 outlets / 3 merch users**
 
 Evaluation and rollout include stratified golden sets, cross-store validation, Recall@K,
 FPR-anchored precision, Wilson intervals, pre-registered acceptance / kill thresholds, a
@@ -54,8 +54,7 @@ FPR-anchored precision, Wilson intervals, pre-registered acceptance / kill thres
 
 ## My role
 
-I own the technical architecture and production rollout of this AI subsystem and have been
-hands-on in retrieval/matching, OCR/VLM and embedding services, multimodal fusion, guardrails,
+I owned the technical architecture and production rollout of this AI subsystem and was hands-on in retrieval/matching, OCR/VLM and embedding services, multimodal fusion, guardrails,
 evaluation methodology and production infrastructure. The broader platform was extended
 by the team of 7 engineers I hired and led as Head of AI.
 

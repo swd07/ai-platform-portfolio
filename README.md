@@ -33,7 +33,7 @@ I built independently end-to-end.
 | **AI Marketing & Brand Growth Platform** | Multi-source marketing intelligence: Instagram, website traffic, search visibility, content analytics, influencer workflow and AI-assisted reporting | [Case study](projects/marketing-platform.md) |
 | **AI Infrastructure Control Plane & Security Operations** | Self-hosted control plane + deterministic AIOps/security + H200/model observability + Qwen incident assistant + least-privilege MCP access | [Case study](projects/infra-monitoring-agent.md) |
 | **Jarvis — Multi-Agent Orchestrator** | Voice-first executive/ops command center: WebRTC, agent registry + command queue, project intelligence, safe browser actions and delegated work | [Case study](projects/jarvis.md) |
-| **Fitness Marathon Platform** | 0→1 coach/client product with private media, chat, RBAC and full-stack delivery | [Case study](projects/fitness-platform.md) |
+| **Fitness Marathon Platform** | 0→1 coach/client prototype with private media, chat, RBAC and full-stack delivery | [Case study](projects/fitness-platform.md) |
 
 ---
 
@@ -86,7 +86,7 @@ offline.**
   geographic coverage, client clusters, ABC/XYZ, churn risk, visit coverage and configurable pivot.
 - Demand forecasting is a **versioned pipeline**, with Prophet per active SKU, holiday/promotion/
   weather inputs, walk-forward backtesting, WAPE/sMAPE analysis and top-down customer allocation.
-  Current audited quality remains weak at **WAPE ~57%**, so it is an improvement area rather than a
+  Audited quality remained weak at **WAPE ~57%**, so it is an improvement area rather than a
   headline result.
 - Merchandising combines a native **Kotlin/Compose offline terminal** with Room/WorkManager,
   planogram/shelf-zone workflows and the production CV/retrieval pipeline.
@@ -308,7 +308,7 @@ telemetry, live activity and conversational state** on one screen.
 
 ---
 
-## Fitness Marathon Platform — 0→1 Product
+## Fitness Marathon Platform — 0→1 Prototype
 
 Next.js 15 + Payload CMS 3 + PostgreSQL coach/client platform for cohort-based fitness programs.
 Built as an app-like product with trainer/client flows, private signed media, RBAC, group/direct
