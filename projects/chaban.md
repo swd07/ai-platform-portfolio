@@ -26,8 +26,7 @@ Internal name: AI Chaban2
 
 The platform is the operating system of the commercial team. Its transactional core is the daily work
 of field sales representatives — routes, GPS-stamped visits, orders, cash receipts, returns, customer
-debt and stock — synchronized with 1C ERP and available offline. On top of that core sit the
-management layers below.
+debt and stock — synchronized with 1C ERP and available offline.
 
 Above that transactional layer sit:
 
