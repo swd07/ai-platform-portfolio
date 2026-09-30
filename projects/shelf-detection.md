@@ -56,7 +56,7 @@ FPR-anchored precision, Wilson intervals, pre-registered acceptance / kill thres
 
 I own the technical architecture and production rollout of this AI subsystem and have been
 hands-on in retrieval/matching, OCR/VLM and embedding services, multimodal fusion, guardrails,
-evaluation methodology and production infrastructure. The broader Chaban platform was extended
+evaluation methodology and production infrastructure. The broader platform was extended
 by the team of 7 engineers I hired and led as Head of AI.
 
 ## Go deeper

@@ -1,17 +1,33 @@
-# AI Chaban2 — Commercial Operating Platform for Field Sales & Distribution
+# AI Analytical Platform — Commercial Operations for FMCG Distribution
 
 📖 Full case study: https://swd07.github.io/projects/chaban-platform/
 
-> A production field-sales and commercial-operations platform for the distribution subsidiary of a dairy producer: offline mobile workflows for sales reps, bidirectional 1C ERP integration, KPI and motivation, management BI, forecasting, merchandising computer vision, and self-hosted AI services.
+> One platform runs the commercial side of a dairy distributor: field sales, two-way 1C ERP exchange, KPI and motivation, management BI, demand forecasting, shelf recognition and self-hosted AI agents. 98% of company orders flow through it.
 
-![Chaban platform architecture](../assets/chaban-architecture.png)
+Internal name: AI Chaban2
+
+## At a glance
+
+| Module | What it does | Scale / result |
+|---|---|---|
+| Field sales (offline PWA) | Routes, GPS visits, orders, payments, returns, debt | 21 reps, ~1,500 outlets, 45.8k of 46.5k orders created offline |
+| 1C ERP integration | 15 inbound data types; orders, receipts and returns posted back | 145k+ envelopes; 98% of company orders |
+| KPI & motivation | 12 production schemes, editable thresholds | Role-scoped for reps, supervisors, managers |
+| Management BI | 13 analytical areas, PPTX management reports | Directors and supervisors |
+| Demand forecasting | Versioned pipeline, walk-forward backtesting, customer allocation | Per active SKU |
+| Merchandising AI | Android field capture + multimodal shelf recognition | 95.8% brand precision, 6k+ photos |
+| AI agents & operations | Director, KPI and dashboard agents; infrastructure bot | Self-hosted on H200, traced in Langfuse |
+
+42 users from field reps to directors · 103 GB PostgreSQL, ~278M rows.
+
+![AI Analytical Platform architecture](../assets/chaban-architecture.png)
 
 ## What the platform is
 
-AI Chaban2 is primarily a **field-sales and commercial-operations platform**, not an AI demo.
-Its production core is the daily workflow of field sales representatives: routes, GPS-stamped visits,
-orders, cash receipts, returns, customer debt, stock visibility, audits and notes — synchronized with
-1C ERP and available offline.
+The platform is the operating system of the commercial team. Its transactional core is the daily work
+of field sales representatives — routes, GPS-stamped visits, orders, cash receipts, returns, customer
+debt and stock — synchronized with 1C ERP and available offline. On top of that core sit the
+management layers below.
 
 Above that transactional layer sit:
 
@@ -22,7 +38,7 @@ Above that transactional layer sit:
 - self-hosted LLM agents and infrastructure monitoring.
 
 By August 2026, **98% of company orders in 1C carried a platform-generated identifier** — about
-**9k orders/month** — making Chaban2 the primary order-entry channel for the commercial team.
+**9k orders/month** — making the platform the primary order-entry channel for the commercial team.
 
 ## Users & scale
 
@@ -209,7 +225,7 @@ The value of the current implementation is therefore twofold:
 2. it provides the **versioning, backtesting and error-analysis machinery** needed to improve that
    signal without evaluating changes on anecdotal examples.
 
-Procurement and production planning are not part of the Chaban2 production product; the forecast is
+Procurement and production planning are not part of the platform's production product; the forecast is
 used for commercial planning / recommendations rather than being presented as an autonomous supply
 planning system.
 
@@ -311,14 +327,14 @@ represented as a heavily used daily workflow.
 
 The integration is bidirectional.
 
-### 1C → Chaban2
+### 1C → Platform
 
 1C pushes **15 document/data types** into the platform as JSON envelopes, including orders,
 shipments/sales, receipts, receivables, stock, prices, agreements, discounts, clients, products and
 sales representatives. More than **145k inbound envelopes** were present in the audited production
 system. Processing uses business-key upserts and per-type rollback boundaries.
 
-### Chaban2 → 1C
+### Platform → 1C
 
 The platform posts:
 

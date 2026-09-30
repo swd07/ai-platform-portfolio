@@ -26,7 +26,7 @@ I built independently end-to-end.
 
 | Project | What it is | Evidence / deep dive |
 |---|---|---|
-| **AI Chaban2** | Commercial operating platform: offline field sales, 1C ERP, KPI/BI, versioned forecasting/backtesting, merchandising AI and agents | [Portfolio case study](projects/chaban.md) |
+| **AI Analytical Platform** | Commercial operating platform for a dairy distributor: offline field sales, two-way 1C ERP, KPI and motivation, 13-area BI, demand forecasting, shelf recognition and AI agents. 98% of company orders flow through it. | [Portfolio case study](projects/chaban.md) |
 | **Operations & Supply Planning + Action Agent** | Planning platform for the group's distribution company with stock/supply workflows and an embedded 11-tool self-hosted Qwen action agent (custom stateful orchestration) | [Case study](projects/operations-supply-planning-agent.md) |
 | **Internal Developer Platform & Release Orchestration** | Delivery control plane for repository state, selective promotion, conflict handling, dependency preflight, builds and runtime restart/verification | [Case study](projects/developer-delivery-control-plane.md) |
 | **Retail Shelf Detection** | Offline Android field capture + production multimodal retrieval/recognition with Qdrant, DINOv2/ArcFace, guardrails and abstention | **[Technical case-study repository](https://github.com/swd07/retail-shelf-detection)** |
@@ -37,9 +37,9 @@ I built independently end-to-end.
 
 ---
 
-## AI Chaban2 — Commercial Operating Platform
+## AI Analytical Platform — Commercial Operations for FMCG Distribution
 
-![Chaban platform architecture](assets/chaban-architecture.png)
+![AI Analytical Platform architecture](assets/chaban-architecture.png)
 
 A production **field-sales and commercial-operations platform** for the distribution subsidiary of a dairy FMCG manufacturer. Its core
 is an offline-first working application for field sales reps, integrated bidirectionally with 1C ERP.
@@ -101,7 +101,7 @@ savings.
 extended the platform, while I kept ownership of architecture, major technology decisions,
 AI/retrieval/evaluation work, ERP/infrastructure decisions and production operations.
 
-→ **[Full Chaban product / architecture case study](projects/chaban.md)**  
+→ **[Full platform product / architecture case study](projects/chaban.md)**  
 → [Offline merchandising terminal deep dive](projects/merch-terminal.md)
 
 ---
