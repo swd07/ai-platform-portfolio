@@ -16,7 +16,7 @@ Internal name: AI Chaban2
 | Management BI | 13 analytical areas, PPTX management reports | Directors and supervisors |
 | Demand forecasting | Versioned pipeline, walk-forward backtesting, customer allocation | Per active SKU |
 | Merchandising AI | Android field capture + multimodal shelf recognition | 95.8% brand precision, 6k+ photos |
-| AI agents & operations | Director, KPI and dashboard agents; infrastructure bot | Self-hosted on H200, agent traces evaluated in self-hosted Langfuse |
+| AI agents & operations | Director, KPI and dashboard agents; infrastructure bot | Self-hosted on H200; agent traces evaluated offline in Langfuse |
 
 42 users from field reps to directors · 103 GB PostgreSQL, ~278M rows.
 
@@ -305,16 +305,25 @@ coverage remains pilot-scale.
 
 The platform includes self-hosted, tool-calling agents rather than unconstrained chatbots:
 
-- **Director agent** — tools over sales, plans, receivables, returns, portfolio/project context and
-  merchandising data;
-- **KPI agent** — server-scoped access to individual KPI data with numeric output validation and
-  deterministic fallback;
-- **Security / infrastructure bot** — 20+ read/diagnostic operational tools plus minute-level
+- **Director agent** — 9 tools over sales, plans, receivables, returns, portfolio/project context
+  and merchandising data;
+- **KPI agent** — a 9-tool clone of the director agent with the manager identity injected by the
+  server, plus a deterministic layer that answers a fixed set of KPI questions straight from the
+  KPI services before the model is asked;
+- **Security / infrastructure bot** — 27 read/diagnostic operational tools plus minute-level
   monitoring and alerts into corporate chat;
-- **Dashboard assistant** — answers from the selected dashboard context rather than unrestricted DB access;
+- **Dashboard assistant** — two SQL tools scoped to the selected dashboard context, with numeric
+  output validation and a Python-template fallback, rather than unrestricted DB access;
 
-Agent orchestration is a custom stateful implementation with conditional routing rather than an agent
-framework, and agent traces were evaluated in self-hosted **Langfuse**.
+There is no agent framework. The chat agents are hand-written **tool-calling loops bounded at four
+rounds** against a shared self-hosted Qwen; the in-app assistant is a single tool-calling pass behind
+explicit routing. Routing is deliberately simple: a keyword pre-check decides whether the first round
+must call a data tool, and the in-app assistant classifies a question into a premium / data / help
+path first. Persistent state is limited to the chat context and a poller cursor.
+
+Agent traces were evaluated **offline** in self-hosted Langfuse: a monkeypatched runner replays a
+question set against the production bot outside the request path. Production calls themselves are
+not traced.
 
 The agent infrastructure is production, but current business adoption is low; it should not be
 represented as a heavily used daily workflow.
