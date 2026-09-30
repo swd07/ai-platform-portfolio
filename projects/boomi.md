@@ -51,3 +51,7 @@ integration, the generative-video tooling, the brand-identity implementation, an
   workflow that keeps creative iteration affordable.
 - **Integration resilience:** access-token refresh/rotation so the publishing path keeps working
   without manual re-auth.
+
+## Related work
+
+- [Supply-planning platform + action agent](operations-supply-planning-agent.md) — a separate product I built for the same client.

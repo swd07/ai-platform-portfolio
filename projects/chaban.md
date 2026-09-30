@@ -16,7 +16,7 @@ Internal name: AI Chaban2
 | Management BI | 13 analytical areas, PPTX management reports | Directors and supervisors |
 | Demand forecasting | Versioned pipeline, walk-forward backtesting, customer allocation | Per active SKU |
 | Merchandising AI | Android field capture + multimodal shelf recognition | 95.8% brand precision, 6k+ photos |
-| AI agents & operations | Director, KPI and dashboard agents; infrastructure bot | Self-hosted on H200, traced in Langfuse |
+| AI agents & operations | Director, KPI and dashboard agents; infrastructure bot | Self-hosted on H200, agent traces evaluated in self-hosted Langfuse |
 
 42 users from field reps to directors · 103 GB PostgreSQL, ~278M rows.
 
@@ -274,7 +274,7 @@ photo.
 The recognition stack combines:
 
 - GroundingDINO product detection;
-- Qwen2.5-VL OCR / package reading;
+- Qwen3-VL-32B (FP8) OCR / package reading;
 - Qwen3-Embedding-8B + Qdrant dense catalog retrieval;
 - DINOv2 visual k-NN;
 - fine-tuned ArcFace retrieval;
@@ -312,11 +312,9 @@ The platform includes self-hosted, tool-calling agents rather than unconstrained
 - **Security / infrastructure bot** — 20+ read/diagnostic operational tools plus minute-level
   monitoring and alerts into corporate chat;
 - **Dashboard assistant** — answers from the selected dashboard context rather than unrestricted DB access;
-- **Planning action agent** — 11 bounded planning / UI tools on the company's separate supply-planning
-  platform ([case study](operations-supply-planning-agent.md)).
 
 Agent orchestration is a custom stateful implementation with conditional routing rather than an agent
-framework, and production LLM calls are traced in **Langfuse**.
+framework, and agent traces were evaluated in self-hosted **Langfuse**.
 
 The agent infrastructure is production, but current business adoption is low; it should not be
 represented as a heavily used daily workflow.
@@ -382,9 +380,9 @@ PostgreSQL / Redis / Qdrant / MinIO
 1C ERP (JSON inbound + SOAP outbound)
 
 AI / ML host:
-vLLM Qwen2.5-VL-72B + Qwen3.6-35B
+vLLM Qwen3-VL-32B FP8 + Qwen3.6-35B
 Qwen3-Embedding-8B
-GroundingDINO · DINOv2 · ArcFace · OCR · Whisper
+GroundingDINO · DINOv2 · ArcFace · OCR
         ↓
 H200 self-hosted inference
 ```
@@ -406,6 +404,6 @@ the team I led, not every later line of code as individual authorship.
 
 `Python` · `FastAPI` · `SQLAlchemy` · `Next.js` · `React` · `Dexie / IndexedDB` · `Socket.IO` ·
 `PostgreSQL 16` · `PgBouncer` · `Redis` · `Qdrant` · `MinIO` · `Kotlin` · `Jetpack Compose` ·
-`Room` · `WorkManager` · `1C SOAP / JSON integration` · `vLLM` · `Qwen2.5-VL` · `Qwen3.6` ·
+`Room` · `WorkManager` · `1C SOAP / JSON integration` · `vLLM` · `Qwen3-VL-32B (FP8)` · `Qwen2.5-VL-72B` · `Qwen3.6-35B` ·
 `Qwen3-Embedding` · `Langfuse` · `GroundingDINO` · `DINOv2` · `ArcFace` · `PyTorch` · `Prophet` · `pandas` ·
 `nginx` · `PM2` · `systemd` · `Docker` · `Prometheus / Grafana`

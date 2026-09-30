@@ -25,7 +25,7 @@ The production path is fully self-hosted:
 Android capture
 → ingest API / queue
 → GroundingDINO
-→ Qwen2.5-VL OCR
+→ Qwen3-VL-32B (FP8) OCR
 → Qwen3-Embedding-8B
 → Qdrant dense retrieval
 → attribute reranking

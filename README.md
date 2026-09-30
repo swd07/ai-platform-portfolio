@@ -27,7 +27,7 @@ I built independently end-to-end.
 | Project | What it is | Evidence / deep dive |
 |---|---|---|
 | **AI Analytical Platform** | Commercial operating platform for a dairy distributor: offline field sales, two-way 1C ERP, KPI and motivation, 13-area BI, demand forecasting, shelf recognition and AI agents. 98% of company orders flow through it. | [Portfolio case study](projects/chaban.md) |
-| **Operations & Supply Planning + Action Agent** | Planning platform for the group's distribution company with stock/supply workflows and an embedded 11-tool self-hosted Qwen action agent (custom stateful orchestration) | [Case study](projects/operations-supply-planning-agent.md) |
+| **Operations & Supply Planning + Action Agent** | Supply-planning platform for BOOMi, a beverage brand client, with stock/supply workflows and an embedded 11-tool self-hosted Qwen action agent (custom tool-calling loop, up to 4 rounds) | [Case study](projects/operations-supply-planning-agent.md) |
 | **Internal Developer Platform & Release Orchestration** | Delivery control plane for repository state, selective promotion, conflict handling, dependency preflight, builds and runtime restart/verification | [Case study](projects/developer-delivery-control-plane.md) |
 | **Retail Shelf Detection** | Offline Android field capture + production multimodal retrieval/recognition with Qdrant, DINOv2/ArcFace, guardrails and abstention | **[Technical case-study repository](https://github.com/swd07/retail-shelf-detection)** |
 | **AI Marketing & Brand Growth Platform** | Multi-source marketing intelligence: Instagram, website traffic, search visibility, content analytics, influencer workflow and AI-assisted reporting | [Case study](projects/marketing-platform.md) |
@@ -108,7 +108,7 @@ AI/retrieval/evaluation work, ERP/infrastructure decisions and production operat
 
 ## Operations & Supply Planning + Action Agent
 
-A private operational planning system for the group's distribution company (Chaban), combining master data,
+A private supply-planning platform for **BOOMi**, a beverage brand client, combining master data,
 supply/stock workflows, planning scenarios and an embedded **self-hosted Qwen action agent**.
 
 The agent is not a generic chatbot. It exposes **11 explicit tools** for two separate classes of work:
@@ -122,8 +122,7 @@ Names, SKUs, periods and metrics are resolved into canonical domain identifiers 
 executed. Ambiguous matches return an error instead of silently choosing one. User identity is
 injected by the application boundary rather than trusted from model-generated tool arguments.
 
-Orchestration is a **custom stateful loop with conditional routing** and bounded tool rounds rather
-than an agent framework; production LLM calls are traced in **Langfuse**.
+Orchestration is a **custom tool-calling loop (up to 4 rounds)** rather than an agent framework.
 
 The key pattern is:
 
@@ -171,7 +170,7 @@ planogram / shelf-zone editing on-device.
 The uploaded shelf photos then become brand/SKU, share-of-shelf, assortment and competitor analytics
 through:
 
-`GroundingDINO → Qwen2.5-VL OCR → Qwen3-Embedding → Qdrant retrieval → DINOv2 / ArcFace → deterministic fusion → guardrails → SKU / brand / unknown`
+`GroundingDINO → Qwen3-VL-32B (FP8) OCR → Qwen3-Embedding → Qdrant retrieval → DINOv2 / ArcFace → deterministic fusion → guardrails → SKU / brand / unknown`
 
 The LLM **does not choose the final SKU**. Independent evidence is fused deterministically, and the
 system abstains when confidence is insufficient.
@@ -338,7 +337,7 @@ CSRF, file-isolation and trainer-scope security coverage.
 - **Evaluation:** golden sets, grouped/cross-store validation, recall@K, FPR-anchored precision,
   replay testing, walk-forward forecast backtesting, WAPE/sMAPE, pre-registered acceptance/kill
   thresholds and explicit abstention.
-- **Safe rollout:** `off → shadow → active`, observability, LLM tracing (Langfuse), health checks,
+- **Safe rollout:** `off → shadow → active`, observability, agent traces evaluated in self-hosted Langfuse, health checks,
   rollback and incident monitoring.
 - **Data / integration:** PostgreSQL, Qdrant, Redis, MinIO/S3-compatible storage, 1C SOAP/JSON,
   Instagram Business API, Yandex Metrika and Google Search Console.
@@ -347,7 +346,7 @@ CSRF, file-isolation and trainer-scope security coverage.
 
 ## Tech stack
 
-**AI / ML:** PyTorch · GroundingDINO · DINOv2 · ArcFace · Qwen2.5-VL · Qwen3-Embedding · vLLM · Qdrant · Langfuse · Prophet · Whisper  
+**AI / ML:** PyTorch · GroundingDINO · DINOv2 · ArcFace · Qwen3-VL-32B (FP8) · Qwen2.5-VL-72B · Qwen3.6-35B · Qwen3-Embedding · vLLM · Qdrant · Langfuse · Prophet · Whisper  
 **Backend / Data:** Python · FastAPI · PostgreSQL · Redis · MinIO · REST · SOAP / 1C  
 **Frontend / Mobile:** TypeScript · Next.js · React · PWA · Dexie/IndexedDB · Kotlin · Jetpack Compose · Room · WorkManager  
 **Realtime / Infra:** Socket.IO · WebRTC · MCP · agent registry / command queues · Git release orchestration · PM2/systemd · Docker · nginx · NVIDIA H200 · Prometheus/Grafana · security telemetry · AIOps  

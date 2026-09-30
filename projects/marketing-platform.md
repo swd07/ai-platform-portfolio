@@ -175,5 +175,6 @@ Adjacent work included the brand's **Next.js / React Three Fiber 3D web experien
 
 - [BOOMi — 3D Web, Generative Video & Social Integration](boomi.md)
 - [Social Media Intelligence & Campaign Analytics](social-media-intelligence.md)
+- [Supply-planning platform + action agent](operations-supply-planning-agent.md) — a separate product for the same client
 
 Those pages document adjacent components in more detail; this page is the integrated **marketing-platform portfolio case study**.

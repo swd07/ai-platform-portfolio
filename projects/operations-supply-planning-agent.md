@@ -2,8 +2,7 @@
 
 📖 Full case study: https://swd07.github.io/projects/operations-agent/
 
-> A private operational planning platform for Chaban, the distribution subsidiary of a dairy FMCG
-> manufacturer — combining master data,
+> A private supply-planning platform for **BOOMi**, a beverage brand client — combining master data,
 > supply planning, stock visibility, demand context, distribution workflows and an embedded
 > self-hosted AI agent that can both navigate the interface and execute bounded planning actions.
 
@@ -31,7 +30,8 @@ unrestricted administrator.
 
 ## Operational platform
 
-The broader private platform provides an operating layer around the distribution business, including:
+The broader private platform was built for **BOOMi**, a beverage brand client, and provides an
+operating layer around its distribution business, including:
 
 - executive operational summary;
 - product and operational master data;
@@ -54,8 +54,7 @@ A typical loop is:
 
 `user intent → Qwen tool call → validated tool handler → planning API / UI action → tool result → final answer`
 
-Orchestration is a **custom stateful implementation with conditional routing** rather than an agent
-framework, and production LLM calls are traced in **Langfuse**.
+Orchestration is a **custom tool-calling loop (up to 4 rounds)** rather than an agent framework.
 
 The server limits tool execution to a bounded number of rounds and falls back to a normal answer when
 no further action is required.
@@ -122,6 +121,10 @@ different user simply by generating another identifier.
 That design reflects a broader rule for tool-using agents:
 
 > authorization context belongs to the application boundary, not to the language model.
+
+Mutations were applied right after domain resolution and server-side identity checks; there was no
+separate confirmation step before writes — the planned next step was human approval for data-changing
+tools.
 
 ## Anti-hallucination behavior
 
@@ -230,7 +233,7 @@ architecture and workflows without exposing proprietary commercial data.
 
 ## Stack
 
-`Python` · `FastAPI` · `Pydantic` · `self-hosted Qwen` · `OpenAI-compatible inference` · `Langfuse` · `REST`  
+`Python` · `FastAPI` · `Pydantic` · `self-hosted Qwen` · `OpenAI-compatible inference` · `REST`  
 `Next.js / React operational UI` · `PM2` · `Linux` · `tool calling` · `structured UI actions`
 
 ## Engineering principles demonstrated
